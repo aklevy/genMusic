@@ -20,10 +20,13 @@ void ofApp::setupGui()
 
 
     // line number
-    _gui.add(_lineNb.set("lineNumber",50,1,200));
+    _gui.add(_lineNb.set("lineNumber",40,1,200));
 
     // add bloody button
     _gui.add(_bloody.set("Bloody",false));//_reset.setup(_nw.getSceneNode(),"reset",false));
+
+    // line width
+    _gui.add(_lineWidth.set("lineWidth",5,0,10));
 
 }
 
@@ -34,6 +37,9 @@ void ofApp::setup()
     ofSetFrameRate(60);
     ofSetVerticalSync(true);
     ofSetCircleResolution(100);
+    ofEnableAntiAliasing();
+    ofEnableAlphaBlending();
+    ofEnableSmoothing();
     //hole
     _currHole.pos = ofPoint(0,0);
     _currHole.radius = 0;
@@ -86,7 +92,7 @@ ofColor ofApp::getLineColor(float x)
         }
     }
 
-    return ofColor(0);//255);
+    return ofColor(0,0,50);//255);
 }
 
 //--------------------------------------------------------------
@@ -94,9 +100,11 @@ void ofApp::draw()
 {
     //draw lines
     ofPushStyle();
+
+    ofSetLineWidth(_lineWidth);
     //ofSetColor(255);
 
-    float lineX = 0;
+    int lineX = 0;
     float stepX = (float) ofGetWindowWidth() / _lineNb ;
     ofColor col(255);
 
@@ -104,7 +112,7 @@ void ofApp::draw()
     {
         col = getLineColor(lineX);
         ofSetColor(col);
-        if(col != ofColor(0))
+        if(col.r != 0)// != ofColor(0))
         {
             _shader.begin();
 
@@ -113,31 +121,42 @@ void ofApp::draw()
 
         ofDrawLine(lineX,0,lineX,ofGetWindowHeight());
 
-        if(col != ofColor(0))
+        if(col.r != 0)// != ofColor(0))
         {
             _shader.end();
         }
 
-        lineX += stepX;
+        lineX += (int)stepX;
     }
 
     ofPopStyle();
 
     //draw holes
     ofPushStyle();
+    ofEnableSmoothing();
+
     ofSetColor(255,0,0);
+    ofSetLineWidth(2);
     if(!_bloody)    ofNoFill();
     //ofBackgroundGradient(ofColor(0),ofColor(255,0,0),OF_GRADIENT_CIRCULAR);
 
     for (auto h : _holes)
     {
 
+     //   ofFill();
         ofDrawCircle(h.pos,h.radius);
+       // ofNoFill();
+        //ofDrawCircle(h.pos,h.radius);
+
     }
 
     if(_currHole.radius)
     {
+        //ofFill();
         ofDrawCircle(_currHole.pos,_currHole.radius);
+        //ofNoFill();
+        //ofDrawCircle(_currHole.pos,_currHole.radius);
+
     }
 
     ofPopStyle();
@@ -169,7 +188,7 @@ void ofApp::mouseMoved(int x, int y)
     {
         // create a new hole, adding the previous to the hole vector
         _holes.push_back(_currHole);
-        _currHole.pos = ofPoint(x,y);
+        _currHole.pos = ofPoint((int)x,(int)y);
         _currHole.radius = 0.02;
     }
 }

@@ -1,10 +1,11 @@
-#version 150
+#version 120
 
 uniform vec4 globalColor;
 
-out vec4 outputColor;
+//out vec4 outputColor;
 
 void main()
 {
-    outputColor = vec4(1.,0.,0.,1.);//globalColor;
+    gl_FragColor = vec4(0.,80./255.,0.,1.);//globalColor;
+//    outputColor = vec4(1.,0.,0.,1.);//globalColor;
 }

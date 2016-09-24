@@ -41,6 +41,7 @@ private:
         ofParameter<bool>    _bloody;
 
         ofParameter<int>    _lineNb;
+        ofParameter<float>    _lineWidth;
 
        // holes
         std::vector<struct hole>  _holes;
