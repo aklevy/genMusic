@@ -3,13 +3,15 @@
 #include "ofMain.h"
 #include "ofxGui.h"
 
-struct hole
+struct circle
 {
     ofPoint pos;
     float radius;
 };
 class ofApp : public ofBaseApp{
 	public:
+        ~ofApp();
+
         //setup
         void reset();
         void setupGui();
@@ -38,14 +40,26 @@ private:
         //gui
         ofxPanel    _gui;
         ofxButton    _reset;
-        ofParameter<bool>    _bloody;
 
+        // line parameters
+        ofParameterGroup        _lineParameters;
         ofParameter<int>    _lineNb;
         ofParameter<float>    _lineWidth;
+        ofParameter<float>    _lineAmplitude;
+        ofParameter<float>    _lineFrequence;
+        ofParameter<ofColor>    _lineDefaultColor;
+        ofParameter<ofColor>    _lineMovingColor;
+
+        // Circle parameters
+        ofParameterGroup        _circleParameters;
+        ofParameter<ofColor>    _circleDefaultColor;
+        ofParameter<bool>       _circleFill;
+        ofParameter<float>      _circleGrowingSpeed;
+
 
        // holes
-        std::vector<struct hole>  _holes;
-        struct hole _currHole;
+        std::vector<struct circle>  _circles;
+        struct circle _currCircle;
 
         //shader
         ofShader _shader;
