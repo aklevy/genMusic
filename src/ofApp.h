@@ -2,66 +2,91 @@
 
 #include "ofMain.h"
 #include "ofxGui.h"
+#include "ofxMaxim.h"
 
 struct circle
 {
     ofPoint pos;
     float radius;
 };
+struct line
+{
+    bool bPlay;
+    bool bMove;
+    int  offsetY;
+    ofColor color;
+};
 class ofApp : public ofBaseApp{
-	public:
-        ~ofApp();
+public:
+    ~ofApp();
 
-        //setup
-        void reset();
-        void setupGui();
-		void setup();
+    // callbacks
+    void reset();
+    void lineNbModified(int& newval);
 
-        void update();
+    //setup
+    void setupGui();
+    void setup();
 
-        // drawing method
-        ofColor getLineColor(float x);
-           void draw();
-		
+    void update();
 
-		void keyPressed(int key);
-		void keyReleased(int key);
-		void mouseMoved(int x, int y);
-		void mouseDragged(int x, int y, int button);
-		void mousePressed(int x, int y, int button);
-		void mouseReleased(int x, int y, int button);
-		void mouseEntered(int x, int y);
-		void mouseExited(int x, int y);
-		void windowResized(int w, int h);
-		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);
+    // drawing method
+    bool isLineMoving(float x);
+    void draw();
+
+
+    // Audio output and input methods
+
+    void audioOut(float * output, int bufferSize, int nChannels);
+
+
+    void keyPressed(int key);
+    void keyReleased(int key);
+    void mouseMoved(int x, int y);
+    void mouseDragged(int x, int y, int button);
+    void mousePressed(int x, int y, int button);
+    void mouseReleased(int x, int y, int button);
+    void mouseEntered(int x, int y);
+    void mouseExited(int x, int y);
+    void windowResized(int w, int h);
+    void dragEvent(ofDragInfo dragInfo);
+    void gotMessage(ofMessage msg);
 
 private:
-        //gui
-        ofxPanel    _gui;
-        ofxButton    _reset;
 
-        // line parameters
-        ofParameterGroup        _lineParameters;
-        ofParameter<int>    _lineNb;
-        ofParameter<float>    _lineWidth;
-        ofParameter<float>    _lineAmplitude;
-        ofParameter<float>    _lineFrequence;
-        ofParameter<ofColor>    _lineDefaultColor;
-        ofParameter<ofColor>    _lineMovingColor;
+    float       _windowWidth;
+    float       _windowHeight;
+    //gui
+    ofxPanel    _gui;
+    ofxButton    _reset;
 
-        // Circle parameters
-        ofParameterGroup        _circleParameters;
-        ofParameter<ofColor>    _circleDefaultColor;
-        ofParameter<bool>       _circleFill;
-        ofParameter<float>      _circleGrowingSpeed;
+    // line parameters
+    ofParameterGroup        _lineParameters;
+    ofParameter<int>        _lineNb;
+    ofParameter<float>      _lineWidth;
+    ofParameter<float>      _lineAmplitude;
+    ofParameter<float>      _lineFrequence;
+    ofParameter<ofColor>    _lineDefaultColor;
+    ofParameter<ofColor>    _lineMovingColor;
+    std::vector<line>       _linesSound;
+
+    // Circle parameters
+    ofParameterGroup        _circleParameters;
+    ofParameter<ofColor>    _circleDefaultColor;
+    ofParameter<bool>       _circleFill;
+    ofParameter<float>      _circleGrowingSpeed;
 
 
-       // holes
-        std::vector<struct circle>  _circles;
-        struct circle _currCircle;
+    // holes
+    std::vector<struct circle>  _circles;
+    struct circle _currCircle;
 
-        //shader
-        ofShader _shader;
+    // ofxMaxim param
+    int		bufferSize; /* buffer size */
+    int		sampleRate;
+    maxiOsc sawOsc;
+    maxiFilter filt;
+    maxiDistortion dist;
 
+    maxiSample mySample;
 };
