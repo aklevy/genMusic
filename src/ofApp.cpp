@@ -16,21 +16,25 @@ void ofApp::reset()
 
     _currCircle.pos = ofPoint(0,0);
     _currCircle.radius = 0;
+    _currCircle.oscSound.phaseReset(0);
+    _currCircle.lifetime = 50;
 
     // reset line vector
-    for(auto& l : _linesSound)
+    for(line& l : _linesSound)
     {
         l.bPlay = false;
         l.bMove = false;
         l.offsetY = 0;
 
         l.color = _lineDefaultColor;
+        l.oscSound.phaseReset(0);
     }
 
 }
 //--------------------------------------------------------------
 void ofApp::lineNbModified(int& newval)
 {
+    lock l(_linemutex);
     int oldSize = _linesSound.size();
     if(oldSize != newval)
         _linesSound.resize(newval);
@@ -92,13 +96,29 @@ void ofApp::setupGui()
                            ofColor(0,0,0,0),
                            ofColor(255,255,255,255)));
 
+    // current circle color
+    _circleParameters.add(_currentCircleColor.set
+                          ("currentCircleColor",
+                           ofColor(254,226,62,255),
+                           ofColor(0,0,0,0),
+                           ofColor(255,255,255,255)));
+
     // circle growing speed
     _circleParameters.add(_circleGrowingSpeed.set("circleGrowth",1,0,5));//_reset.setup(_nw.getSceneNode(),"reset",false));
+
+
+    /*
+     *  Sound Parameters Group
+     */
+    _soundParameters.setName("soundParameters");
+    _soundParameters.add(_freqMod.set("frequence",110,0,10000));
 
 
     // add parameters' group to the gui
     _gui.add(_lineParameters);
     _gui.add(_circleParameters);
+    _gui.add(_soundParameters);
+
     _gui.minimizeAll();
 
 }
@@ -131,6 +151,7 @@ void ofApp::setup()
     l.offsetY = 0;
     l.color = _lineDefaultColor.get();
 
+    lock lok(_linemutex);
     for (int i = 0 ; i < _lineNb ; i++)
     {
         _linesSound.push_back(l);
@@ -141,6 +162,10 @@ void ofApp::setup()
     sampleRate 	= 44100; /* Sampling Rate */
     bufferSize	= 512; /* Buffer Size. you have to fill this buffer with sound using the for loop in the audioOut method */
     ofxMaxiSettings::setup(sampleRate, 2, bufferSize);
+    env.setAttack(1);
+    env.setDecay(1000);
+    env.setSustain(1000);
+    env.setRelease(1);
 
     //mySample.load(ofToDataPath("sounds/beat.wav"));
     ofSoundStreamSetup(2,2,this, sampleRate, bufferSize, 4); /* this has to happen at the end of setup - it switches on the DAC */
@@ -149,7 +174,7 @@ void ofApp::setup()
 //--------------------------------------------------------------
 void ofApp::update()
 {
-    //update current hole
+    //update current circle
     if(_currCircle.radius)
     {
         if(_circles.size() %2==0)
@@ -165,10 +190,20 @@ void ofApp::update()
         //_currHole.radius += pow(0.5,_currHole.radius/2)*(_currHole.radius);//0.2;//10*(ofGetElapsedTimef() - _currHole.radius);
     }
 
+    // update circle lifetime
+    for(circle& c : _circles)
+    {
+        if(c.lifetime > 0)
+            c.lifetime --;
+
+    }
+
+
     // update line structure contained in the vector linesSound
     int lineX = 0;
     float stepX = (float) _windowWidth / _lineNb ;
 
+    lock l(_linemutex);
     for(line& l : _linesSound)
     {
         if(!l.bMove)
@@ -179,7 +214,7 @@ void ofApp::update()
             l.bMove = true;
             l.offsetY = (int)_lineAmplitude *sin(_lineFrequence*lineX/_windowWidth*ofGetElapsedTimef());
             // play sound ?
-            if(abs(l.offsetY) < 10 ) // hitting the upper screen limit
+            if(abs(l.offsetY) < 30 ) // hitting the upper screen limit
             {
                 l.bPlay = true;
                 l.color = ofColor(255,0,0);
@@ -237,6 +272,7 @@ void ofApp::draw()
     int lineX = 0;
     float stepX = (float) _windowWidth / _lineNb ;
 
+    lock l(_linemutex);
     for(line& l : _linesSound)
     {
 
@@ -246,7 +282,7 @@ void ofApp::draw()
         glVertex3f(lineX, l.offsetY, 0.0);
         glVertex3f(lineX, _windowHeight + l.offsetY, 0);
         glEnd();
-       /*
+        /*
           ofSetColor(l.color);
         ofDrawLine(lineX, l.offsetY , lineX, h + l.offsetY);
         */
@@ -278,6 +314,8 @@ void ofApp::draw()
     if(_currCircle.radius)
     {
         //ofFill();
+        ofSetColor(_currentCircleColor);
+
         ofDrawCircle(_currCircle.pos,_currCircle.radius);
         //ofNoFill();
         //ofDrawCircle(_currHole.pos,_currHole.radius);
@@ -295,7 +333,9 @@ void ofApp::draw()
 void ofApp::audioOut(float * output, int bufferSize, int nChannels)
 {
 
+    for(int i = 0 ; i < bufferSize * nChannels; i++) output[i] = 0;
 
+    lock l(_linemutex);
     for (int i = 0; i < bufferSize; i++){
 
 
@@ -306,12 +346,12 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels)
         float stepX = (float) _windowWidth / _lineNb ;
 
 
-        for(line l : _linesSound)
+        for(line& l : _linesSound)
         {
             if(l.bPlay)
             {
 
-
+                /*
                 float sawFreq = maxiMap::linexp(lineX,0, _windowWidth, 1000, 15000);
                 float w = sawOsc.saw(sawFreq);
 
@@ -319,12 +359,67 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels)
 
                 float filtFreq = maxiMap::linexp(lineX,0, _windowHeight, 1000, 15000);
                 w = filt.hires(w, filtFreq, 0.4);
+*/
+                // w = 1000 * sin(i*400);//maxiMap::linexp(lineX,0, _windowWidth, 1000, 15000);
 
+                // float w = sawOsc.pulse(55,0.6);
+                float w = l.oscSound.sinewave(440+440*lineX/_windowWidth);
+                //             w = sawOsc.pulse(110+w,0.2);//it's a pulse wave at 110hz with LFO modulation on the frequency, and width of 0.2
+                //float adsrOut = env.adsr(w,1000,1000,1000,1000);
+                float adsrOut = env.adsr(1.0,env.trigger);
 
-                output[i] += w;
-                output[i+1] += w;
+                //  w = filt.lores(w,adsrOut*10000,10);
+                w*= adsrOut;
+                env.trigger = 1;
+
+                //w = sawOsc.pulse(_freqMod.get()+w,0.2);//it's a pulse wave at 110hz with LFO modulation on the frequency, and width of 0.2
+                output[i * nChannels] += w;
+                output[i * nChannels +1] += w;
             }
             lineX += stepX;
+        }
+        //circle sound
+        for(circle& c : _circles)
+        {
+            if(c.lifetime != 0)
+            {
+                // float w = sawOsc.pulse(55,0.6);
+                float mod = 55+c.radius * 100;
+
+                float wc = c.oscSound.pulse(mod,0.6);
+                //             w = sawOsc.pulse(110+w,0.2);//it's a pulse wave at 110hz with LFO modulation on the frequency, and width of 0.2
+                //float adsrOut = env.adsr(w,1000,1000,1000,1000);
+                float adsrOut = env.adsr(1.0,env.trigger);
+
+                //  w = filt.lores(w,adsrOut*10000,10);
+                wc*= adsrOut;
+                env.trigger = 1;
+
+                //w = sawOsc.pulse(_freqMod.get()+w,0.2);//it's a pulse wave at 110hz with LFO modulation on the frequency, and width of 0.2
+                output[i * nChannels] += wc;
+                output[i * nChannels +1] += wc;
+            }
+
+        }
+
+        // play current circle
+        if(_currCircle.radius)
+        {
+            // float w = sawOsc.pulse(55,0.6);
+            float mod = 55+_currCircle.radius * 100;
+
+            float wc = _currCircle.oscSound.pulse(mod,0.6);
+            //             w = sawOsc.pulse(110+w,0.2);//it's a pulse wave at 110hz with LFO modulation on the frequency, and width of 0.2
+            //float adsrOut = env.adsr(w,1000,1000,1000,1000);
+            float adsrOut = env.adsr(1.0,env.trigger);
+
+            //  w = filt.lores(w,adsrOut*10000,10);
+            wc*= adsrOut;
+            env.trigger = 1;
+
+            //w = sawOsc.pulse(_freqMod.get()+w,0.2);//it's a pulse wave at 110hz with LFO modulation on the frequency, and width of 0.2
+            output[i * nChannels] += wc;
+            output[i * nChannels +1] += wc;
         }
         //double wave = mySample.play(0.5);
 
@@ -336,6 +431,9 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels)
     }
 
 
+    int n = _linesSound.size();
+    if(n > 1)
+        for(int i = 0 ; i < bufferSize * nChannels; i++) output[i] /= n;
 }
 
 //--------------------------------------------------------------
@@ -362,6 +460,7 @@ void ofApp::mouseMoved(int x, int y)
         _circles.push_back(_currCircle);
         _currCircle.pos = ofPoint((int)x,(int)y);
         _currCircle.radius = 0.02;
+        _currCircle.lifetime = 50;
     }
 }
 
@@ -383,7 +482,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 {
     //_currHole.radius = ofGetElapsedTimef() - _currHole.radius;
     //_currHole.radius *= 10;
-   // ofLog() << "hole radius " << _currCircle.radius;
+    // ofLog() << "hole radius " << _currCircle.radius;
 
     _circles.push_back(_currCircle);
 

@@ -8,6 +8,10 @@ struct circle
 {
     ofPoint pos;
     float radius;
+
+    maxiOsc oscSound;
+    int lifetime;
+
 };
 struct line
 {
@@ -15,6 +19,8 @@ struct line
     bool bMove;
     int  offsetY;
     ofColor color;
+
+    maxiOsc oscSound;
 };
 class ofApp : public ofBaseApp{
 public:
@@ -68,16 +74,20 @@ private:
     ofParameter<float>      _lineFrequence;
     ofParameter<ofColor>    _lineDefaultColor;
     ofParameter<ofColor>    _lineMovingColor;
+
+    // lines
+    std::mutex _linemutex;
     std::vector<line>       _linesSound;
 
     // Circle parameters
     ofParameterGroup        _circleParameters;
     ofParameter<ofColor>    _circleDefaultColor;
+    ofParameter<ofColor>    _currentCircleColor;
     ofParameter<bool>       _circleFill;
     ofParameter<float>      _circleGrowingSpeed;
 
 
-    // holes
+    // circles
     std::vector<struct circle>  _circles;
     struct circle _currCircle;
 
@@ -87,6 +97,13 @@ private:
     maxiOsc sawOsc;
     maxiFilter filt;
     maxiDistortion dist;
+    maxiEnv         env;
 
     maxiSample mySample;
-};
+
+    // sound param
+    ofParameterGroup        _soundParameters;
+    ofParameter<int>        _freqMod;
+
+
+    using lock = std::lock_guard<std::mutex>;};
