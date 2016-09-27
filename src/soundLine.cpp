@@ -8,6 +8,10 @@ SoundLine::SoundLine ()
       _bMove(false)
 {
     _linePlayingColor = ofColor(255,0,0);
+    _envSound.setAttack(1);
+    _envSound.setDecay(1000);
+    _envSound.setSustain(1000);
+    _envSound.setRelease(1);
 }
 //--------------------------------------------------------------
 
@@ -79,9 +83,11 @@ float SoundLine::getSound(float xMod)
 
         // float w = sawOsc.pulse(55,0.6);
         float sound = _oscSound.sinewave(440+440*xMod);
+       // sound += 0.1*_oscSound.sinewave(261*ofGetMouseY());
+
         //             w = sawOsc.pulse(110+w,0.2);//it's a pulse wave at 110hz with LFO modulation on the frequency, and width of 0.2
         //float adsrOut = env.adsr(w,1000,1000,1000,1000);
-        float adsrOut = _envSound.adsr(1.0,_envSound.trigger);
+             float adsrOut = _envSound.adsr(1.0,_envSound.trigger);
 
         //  w = filt.lores(w,adsrOut*10000,10);
         sound *= adsrOut;

@@ -1,4 +1,5 @@
 #include "ofApp.h"
+#include <boost/range/algorithm_ext/erase.hpp>
 
 //--------------------------------------------------------------
 ofApp::~ofApp()
@@ -15,8 +16,8 @@ void ofApp::reset()
     _vecSoundCircles.clear();
 
     _currCircle.reset(50);
-  //  _currCircle.setColor(_currentCircleColor.get());
-  //  _currCircle.setDashColor(_currentCircleColor.get());
+    //  _currCircle.setColor(_currentCircleColor.get());
+    //  _currCircle.setDashColor(_currentCircleColor.get());
 
     // reset line vector
     lock lM(_lineMutex);
@@ -25,6 +26,13 @@ void ofApp::reset()
         l.reset();
     }
 
+    if(_fbo.isAllocated())
+    {
+        _fbo.begin();
+        glClearColor(1.0, 1.0, 1.0, 0.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+        _fbo.end();
+    }
 }
 //--------------------------------------------------------------
 void ofApp::lineNbModified(int& newval)
@@ -143,12 +151,17 @@ void ofApp::setupGui()
     // circle growing speed
     _circleParameters.add(_circleGrowingSpeed.set("circleGrowth",1,0,5));//_reset.setup(_nw.getSceneNode(),"reset",false));
 
+    // draw all the circles (even if they do not emit any sound)
+    _circleParameters.add(_drawAllCircles.set("historic",false));//_reset.setup(_nw.getSceneNode(),"reset",false));
+
 
     /*
      *  Sound Parameters Group
      */
     _soundParameters.setName("soundParameters");
     _soundParameters.add(_freqMod.set("frequence",0.5,0,10));
+    _soundParameters.add(_volumeLine.set("volumeLine",3.,0,5));
+    _soundParameters.add(_volumeCircle.set("volumeCircle",0.3,0,5));
 
 
     // add parameters' group to the gui
@@ -174,6 +187,14 @@ void ofApp::setup()
     // window size
     _windowWidth = ofGetWindowWidth();
     _windowHeight = ofGetWindowHeight();
+
+
+    // allocate fbo
+    if(!_fbo.isAllocated())
+    {
+        // allocate fbo
+        _fbo.allocate(_windowWidth , _windowHeight,GL_RGBA);
+    }
 
     // circle
     _currCircle.setup(ofPoint(0),0,50);
@@ -207,6 +228,18 @@ void ofApp::update()
     //update current circle's radius using growing speed
     bool bLimit = (_vecSoundCircles.size()%2 == 0 );
     _currCircle.updateRadius(_circleGrowingSpeed.get(), bLimit);
+
+    // erase unplaying sound circle
+    if(_vecSoundCircles.size())
+    {
+        lock lc(_circleMutex);
+        boost::range::remove_erase_if(_vecSoundCircles,
+                                      [] (SoundCircle& sc) {
+            return sc.isToBeRemoved();
+
+        });
+    }
+
 
     // update circle lifetime
     for(SoundCircle& c : _vecSoundCircles)
@@ -264,7 +297,7 @@ void ofApp::draw()
     //draw lines
     ofPushStyle();
 
-   // ofSetLineWidth();
+    // ofSetLineWidth();
     int lineX = 0;
     float stepX = (float) _windowWidth / _lineNb ;
 
@@ -279,14 +312,51 @@ void ofApp::draw()
 
     ofPopStyle();
 
-    //draw circles
+    /*
+     * Draw circles
+     * */
+
+    // if there are no new circles, draw fbo texture
+    //ofTexture fboTex = _fbo.getTexture();
+
+
+    if(_vecSoundCircles.size() > 0 && _fbo.isAllocated())
+        // draw the new circles in the texture
+    {
+        _fbo.begin();
+        //ofPushStyle();
+
+        lock c(_circleMutex);
+        for (SoundCircle& c : _vecSoundCircles)
+        {
+            if(c.getSoundDuration() <= 0 && !c.isToBeRemoved())
+            {
+                c.toBeRemoved();
+                c.drawSoundCircle();
+
+            }
+        }
+        //ofPopStyle();
+        _fbo.end();
+
+        //  _fbo.draw(0,0);
+
+    }
+    if(_fbo.isAllocated() && _drawAllCircles)
+        _fbo.draw(0,0);
+    /*_fbo.getTexture().draw(ofPoint(0,0,0),
+                               ofPoint(_windowWidth,0,0),
+                               ofPoint(0,_windowHeight,0),
+                              ofPoint(_windowWidth,_windowHeight,0));
+   */
+    // draw playing sound
     ofPushStyle();
-    ofEnableSmoothing();
 
     lock c(_circleMutex);
     for (SoundCircle& c : _vecSoundCircles)
     {
-        c.drawSoundCircle();
+        if(c.getSoundDuration())
+            c.drawSoundCircle();
     }
 
     _currCircle.drawSoundCircle();
@@ -304,36 +374,40 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels)
 
     for(int i = 0 ; i < bufferSize * nChannels; i++) output[i] = 0;
 
-    lock l(_lineMutex);
+
     for (int i = 0; i < bufferSize; i++){
 
         // get lines's sound
         int lineX = 0;
         float stepX = (float) _windowWidth / _lineNb ;
 
+        lock l(_lineMutex);
         for(SoundLine& l : _vecSoundLines)
         {
-            float soundL = l.getSound(lineX/_windowWidth);
-            if(soundL)
+            float soundL = _volumeLine * l.getSound((float)lineX/_windowWidth);
+            if(soundL )
             {
                 output[i * nChannels] += soundL;
                 output[i * nChannels +1] += soundL;
             }
             lineX += stepX;
         }
+
         //get circles' sound
+
+        lock lc(_circleMutex);
         for(SoundCircle& c : _vecSoundCircles)
         {
-            float soundC = c.getSound();
+            float soundC = _volumeCircle * c.getSound();
             if(soundC)
             {
-                output[i * nChannels] += soundC;
-                output[i * nChannels +1] += soundC;
+                output[i * nChannels] += soundC ;
+                output[i * nChannels +1] += soundC ;
             }
         }
 
         // get current circle's sound
-        float soundCurr = _currCircle.getSound();
+        float soundCurr = _volumeCircle * _currCircle.getSound();
         if(soundCurr)
         {
             output[i * nChannels] += soundCurr;
@@ -342,7 +416,7 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels)
     }
 
 
-    int n = _vecSoundLines.size()+5; //get playing circle number
+    int n = _vecSoundLines.size() + _vecSoundCircles.size() + 1;//+5; //get playing circle number
     if(n > 1)
         for(int i = 0 ; i < bufferSize * nChannels; i++) output[i] /= n;
 }
@@ -360,8 +434,8 @@ void ofApp::keyReleased(int key){
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y)
 {
-    float err = 5;
-    if(_currCircle.isSameCircle(x,y,err))
+    float err = 10;
+    if(_currCircle.isSameCircle(x,y,err) || _vecSoundCircles.size() > 50)
     {
         //same SoundCircle, radius augments in the update()
     }
@@ -370,6 +444,7 @@ void ofApp::mouseMoved(int x, int y)
         // add the previous circle to the circle vector
         _currCircle.setColor(_circleDefaultColor.get());
         _currCircle.setDashColor(_circleDefaultColor.get());
+        lock lc(_circleMutex);
         _vecSoundCircles.push_back(_currCircle);
 
         // "new" current circle
@@ -387,6 +462,7 @@ void ofApp::mouseDragged(int x, int y, int button){
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button)
 {
+    ofLog() << _vecSoundCircles.size();
     /*_currCircle.pos = ofPoint(x,y);
     _currCircle.radius = 0.01;//ofGetElapsedTimef();
 

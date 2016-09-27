@@ -61,6 +61,7 @@ private:
 
     float       _windowWidth;
     float       _windowHeight;
+    ofFbo               _fbo;
 
     //gui
     ofxPanel    _gui;
@@ -83,6 +84,8 @@ private:
     ofParameterGroup        _circleParameters;
     ofParameter<ofColor>    _circleDefaultColor;
     ofParameter<ofColor>    _currentCircleColor;
+    ofParameter<bool>       _drawAllCircles;
+
    // ofParameter<bool>       _circleFill;
     ofParameter<float>      _circleGrowingSpeed;
 
@@ -99,6 +102,8 @@ private:
     // sound param
     ofParameterGroup        _soundParameters;
     ofParameter<int>        _freqMod;
+    ofParameter<float>      _volumeLine;
+    ofParameter<float>      _volumeCircle;
 
 
     using lock = std::lock_guard<std::mutex>;

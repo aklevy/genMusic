@@ -15,6 +15,10 @@ Project{
             'src/main.cpp',
             'src/ofApp.cpp',
             'src/ofApp.h',
+            'src/soundCircle.cpp',
+            'src/soundCircle.h',
+            'src/soundLine.cpp',
+            'src/soundLine.h'
         ]
 
         of.addons: [

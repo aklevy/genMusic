@@ -27,6 +27,7 @@ public:
     void setMove(bool b){_bMove = b;}
     bool isPlaying(){return _bPlay;}
 
+
 private:
 
     // shape parameters
@@ -43,9 +44,8 @@ private:
     ofColor     _lineDefaultColor;
     ofColor     _lineMovingColor;
     ofColor     _linePlayingColor;
-
+    maxiOsc     _oscSound;
+    maxiEnv     _envSound;
 
     // sound parameters
-    maxiEnv     _envSound;
-    maxiOsc     _oscSound;
 };

@@ -6,8 +6,14 @@ SoundCircle::SoundCircle ()
     : _position(ofPoint(0,0)),
       _radius(0.),
       _soundDuration(50),
-      _dashWidth(3)
+      _dashWidth(3),
+      _bErase(false)
 {
+
+    _envSound.setAttack(1);
+    _envSound.setDecay(1000);
+    _envSound.setSustain(1000);
+    _envSound.setRelease(1);
 }
 //--------------------------------------------------------------
 
@@ -24,6 +30,8 @@ void SoundCircle::setup(ofPoint pos, float rad, int soundDur)
     _radius = rad;
     _oscSound.phaseReset(0);
     _soundDuration = soundDur;
+    _bErase = false;
+
 }
 
 //--------------------------------------------------------------
@@ -116,9 +124,17 @@ float SoundCircle::getSound()
     if(_soundDuration > 0 && _radius != 0)
     {
         // float w = sawOsc.pulse(55,0.6);
-        float mod = 55 + _radius * 100;
+        float modR = _radius/2;//150 + _radius * 100;
 
-        float pulse = _oscSound.pulse(mod,0.6);
+        float soundSin = _oscSound.sinewave(82+_position.x+0.2);
+        soundSin += modR*_oscSound.sinewave(65+_position.y);
+      //  soundSin += 2*modR*_oscSound.sinewave(32+0.2);
+
+       // soundSin += _oscSound.sinewave(65*modR+0.2);
+        //soundSin += _oscSound.saw(_position.x);
+        //  soundSin += _oscSound.sinewave(97*modY+0.5);
+float pulse = soundSin;
+//        float pulse = _oscSound.pulse(soundSin,0.6);
         //             w = sawOsc.pulse(110+w,0.2);//it's a pulse wave at 110hz with LFO modulation on the frequency, and width of 0.2
         //float adsrOut = env.adsr(w,1000,1000,1000,1000);
         float adsrOut = _envSound.adsr(1.0,_envSound.trigger);
@@ -147,7 +163,12 @@ bool SoundCircle::isTouchingLine(float x)
 
 bool SoundCircle::isSameCircle(float x, float y, float err)
 {
-    if(abs(_position.x - x) < err && abs(_position.y - y) < err)
+
+    float xx = (_position.x - x) * (_position.x - x) ;
+    float yy = (_position.y - y) * (_position.y - y) ;
+    float dist = sqrt(xx + yy );
+
+    if(dist < err)//if(abs(_position.x - x) < err && abs(_position.y - y) < err)
     {
        return true;
     }

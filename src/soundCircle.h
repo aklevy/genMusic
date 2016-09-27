@@ -19,6 +19,7 @@ public:
     void drawSoundCircle();
 
     // sound method
+    int getSoundDuration(){return _soundDuration;}
     float getSound();
 
     bool isTouchingLine(float x);
@@ -27,6 +28,8 @@ public:
     void setColor(ofColor col){_circleColor = col;}
     void setDashColor(ofColor col){_dashCircleColor = col;}
 
+    void toBeRemoved(){_bErase = true;}
+    bool isToBeRemoved(){return _bErase;}
 private:
     // shape parameters
     ofPoint     _position;
@@ -40,5 +43,7 @@ private:
     // sound parameters
     maxiEnv     _envSound;
     maxiOsc     _oscSound;
+    maxiFilter  _filterSound;
     int         _soundDuration;
+    bool        _bErase;
 };
