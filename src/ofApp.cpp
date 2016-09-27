@@ -12,14 +12,14 @@ ofApp::~ofApp()
 void ofApp::reset()
 {
     // _lineNb.set(50);
-    _circles.clear();
+    _soundCircles.clear();
 
-    _currCircle.pos = ofPoint(0,0);
-    _currCircle.radius = 0;
-    _currCircle.oscSound.phaseReset(0);
-    _currCircle.lifetime = 50;
+    _currCircle.reset(50);
+    _currCircle.setColor(_currentCircleColor.get());
+    _currCircle.setDashColor(_currentCircleColor.get());
 
     // reset line vector
+    lock lM(_lineMutex);
     for(line& l : _linesSound)
     {
         l.bPlay = false;
@@ -34,12 +34,29 @@ void ofApp::reset()
 //--------------------------------------------------------------
 void ofApp::lineNbModified(int& newval)
 {
-    lock l(_linemutex);
+    lock lM(_lineMutex);
     int oldSize = _linesSound.size();
     if(oldSize != newval)
         _linesSound.resize(newval);
 
 }
+//--------------------------------------------------------------
+void ofApp::circleColModified(ofColor& newval)
+{
+    lock cM(_circleMutex);
+    for(SoundCircle& c : _soundCircles)
+    {
+        c.setColor(newval);
+        c.setDashColor(newval);
+    }
+}
+//--------------------------------------------------------------
+void ofApp::currentCircleColModified(ofColor& newval)
+{
+    _currCircle.setColor(newval);
+    _currCircle.setDashColor(newval);
+}
+
 //--------------------------------------------------------------
 void ofApp::setupGui()
 {
@@ -87,7 +104,7 @@ void ofApp::setupGui()
     _circleParameters.setName("circleParameters");
 
     // filling circle
-    _circleParameters.add(_circleFill.set("fillCircle",true));//_reset.setup(_nw.getSceneNode(),"reset",false));
+    // _circleParameters.add(_circleFill.set("fillCircle",true));//_reset.setup(_nw.getSceneNode(),"reset",false));
 
     // circle default color
     _circleParameters.add(_circleDefaultColor.set
@@ -95,6 +112,8 @@ void ofApp::setupGui()
                            ofColor(255,0,0,255),
                            ofColor(0,0,0,0),
                            ofColor(255,255,255,255)));
+    _circleDefaultColor.addListener(this,&ofApp::circleColModified);
+
 
     // current circle color
     _circleParameters.add(_currentCircleColor.set
@@ -102,6 +121,7 @@ void ofApp::setupGui()
                            ofColor(254,226,62,255),
                            ofColor(0,0,0,0),
                            ofColor(255,255,255,255)));
+    _currentCircleColor.addListener(this,&ofApp::currentCircleColModified);
 
     // circle growing speed
     _circleParameters.add(_circleGrowingSpeed.set("circleGrowth",1,0,5));//_reset.setup(_nw.getSceneNode(),"reset",false));
@@ -139,8 +159,8 @@ void ofApp::setup()
     _windowHeight = ofGetWindowHeight();
 
     // circle
-    _currCircle.pos = ofPoint(0,0);
-    _currCircle.radius = 0;
+    _currCircle.setup(ofPoint(0),0,50);
+
 
     // setting up Gui
     setupGui();
@@ -151,7 +171,7 @@ void ofApp::setup()
     l.offsetY = 0;
     l.color = _lineDefaultColor.get();
 
-    lock lok(_linemutex);
+    lock lM(_lineMutex);
     for (int i = 0 ; i < _lineNb ; i++)
     {
         _linesSound.push_back(l);
@@ -174,28 +194,14 @@ void ofApp::setup()
 //--------------------------------------------------------------
 void ofApp::update()
 {
-    //update current circle
-    if(_currCircle.radius)
-    {
-        if(_circles.size() %2==0)
-        {
-            _currCircle.radius += _circleGrowingSpeed*pow(0.5,_currCircle.radius/2)*(_currCircle.radius);//0.2;//10*(ofGetElapsedTimef() - _currHole.radius);
-        }
-        else
-        {
-
-            _currCircle.radius += _circleGrowingSpeed*(_currCircle.radius>30?-1:1)*0.2;
-        }
-        //_currHole.radius += 0.1/sqrt(_currHole.radius);//0.2;//10*(ofGetElapsedTimef() - _currHole.radius);
-        //_currHole.radius += pow(0.5,_currHole.radius/2)*(_currHole.radius);//0.2;//10*(ofGetElapsedTimef() - _currHole.radius);
-    }
+    //update current circle's radius using growing speed
+    bool bLimit = (_soundCircles.size()%2 == 0 );
+    _currCircle.updateRadius(_circleGrowingSpeed.get(), bLimit);
 
     // update circle lifetime
-    for(circle& c : _circles)
+    for(SoundCircle& c : _soundCircles)
     {
-        if(c.lifetime > 0)
-            c.lifetime --;
-
+        c.update(1);
     }
 
 
@@ -203,7 +209,7 @@ void ofApp::update()
     int lineX = 0;
     float stepX = (float) _windowWidth / _lineNb ;
 
-    lock l(_linemutex);
+    lock l(_lineMutex);
     for(line& l : _linesSound)
     {
         if(!l.bMove)
@@ -243,20 +249,15 @@ void ofApp::update()
 bool ofApp::isLineMoving(float x)
 {
     // check first for current hole
-    if ( _currCircle.pos.x - _currCircle.radius < x
-         && _currCircle.pos.x + _currCircle.radius > x)
-    {
+    if(_currCircle.isTouchingLine(x))
         return true;
-    }
 
-    // check other holes
-    for (auto& h : _circles)
+    // check other circles
+    lock c(_circleMutex);
+    for (SoundCircle& c : _soundCircles)
     {
-        if ( h.pos.x- h.radius < x
-             && h.pos.x + h.radius > x)
-        {
+        if(c.isTouchingLine(x))
             return true;
-        }
     }
 
     return false;
@@ -272,7 +273,7 @@ void ofApp::draw()
     int lineX = 0;
     float stepX = (float) _windowWidth / _lineNb ;
 
-    lock l(_linemutex);
+    lock l(_lineMutex);
     for(line& l : _linesSound)
     {
 
@@ -296,31 +297,13 @@ void ofApp::draw()
     ofPushStyle();
     ofEnableSmoothing();
 
-    ofSetColor(_circleDefaultColor);
-    ofSetLineWidth(2);
-    if(!_circleFill)    ofNoFill();
-    //ofBackgroundGradient(ofColor(0),ofColor(255,0,0),OF_GRADIENT_CIRCULAR);
-
-    for (auto h : _circles)
+    lock c(_circleMutex);
+    for (SoundCircle& c : _soundCircles)
     {
-
-        //   ofFill();
-        ofDrawCircle(h.pos,h.radius);
-        // ofNoFill();
-        //ofDrawCircle(h.pos,h.radius);
-
+        c.drawSoundCircle();
     }
 
-    if(_currCircle.radius)
-    {
-        //ofFill();
-        ofSetColor(_currentCircleColor);
-
-        ofDrawCircle(_currCircle.pos,_currCircle.radius);
-        //ofNoFill();
-        //ofDrawCircle(_currHole.pos,_currHole.radius);
-
-    }
+    _currCircle.drawSoundCircle();
 
     ofPopStyle();
 
@@ -335,7 +318,7 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels)
 
     for(int i = 0 ; i < bufferSize * nChannels; i++) output[i] = 0;
 
-    lock l(_linemutex);
+    lock l(_lineMutex);
     for (int i = 0; i < bufferSize; i++){
 
 
@@ -379,48 +362,24 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels)
             lineX += stepX;
         }
         //circle sound
-        for(circle& c : _circles)
+        for(SoundCircle& c : _soundCircles)
         {
-            if(c.lifetime != 0)
+            float sound = c.getSound();
+            if(sound)
             {
-                // float w = sawOsc.pulse(55,0.6);
-                float mod = 55+c.radius * 100;
-
-                float wc = c.oscSound.pulse(mod,0.6);
-                //             w = sawOsc.pulse(110+w,0.2);//it's a pulse wave at 110hz with LFO modulation on the frequency, and width of 0.2
-                //float adsrOut = env.adsr(w,1000,1000,1000,1000);
-                float adsrOut = env.adsr(1.0,env.trigger);
-
-                //  w = filt.lores(w,adsrOut*10000,10);
-                wc*= adsrOut;
-                env.trigger = 1;
-
-                //w = sawOsc.pulse(_freqMod.get()+w,0.2);//it's a pulse wave at 110hz with LFO modulation on the frequency, and width of 0.2
-                output[i * nChannels] += wc;
-                output[i * nChannels +1] += wc;
+                output[i * nChannels] += sound;
+                output[i * nChannels +1] += sound;
             }
-
         }
 
         // play current circle
-        if(_currCircle.radius)
+        float soundCurr = _currCircle.getSound();
+        if(soundCurr)
         {
-            // float w = sawOsc.pulse(55,0.6);
-            float mod = 55+_currCircle.radius * 100;
-
-            float wc = _currCircle.oscSound.pulse(mod,0.6);
-            //             w = sawOsc.pulse(110+w,0.2);//it's a pulse wave at 110hz with LFO modulation on the frequency, and width of 0.2
-            //float adsrOut = env.adsr(w,1000,1000,1000,1000);
-            float adsrOut = env.adsr(1.0,env.trigger);
-
-            //  w = filt.lores(w,adsrOut*10000,10);
-            wc*= adsrOut;
-            env.trigger = 1;
-
-            //w = sawOsc.pulse(_freqMod.get()+w,0.2);//it's a pulse wave at 110hz with LFO modulation on the frequency, and width of 0.2
-            output[i * nChannels] += wc;
-            output[i * nChannels +1] += wc;
+            output[i * nChannels] += soundCurr;
+            output[i * nChannels +1] += soundCurr;
         }
+
         //double wave = mySample.play(0.5);
 
 
@@ -431,7 +390,7 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels)
     }
 
 
-    int n = _linesSound.size();
+    int n = _linesSound.size()+5; //get playing circle number
     if(n > 1)
         for(int i = 0 ; i < bufferSize * nChannels; i++) output[i] /= n;
 }
@@ -450,17 +409,21 @@ void ofApp::keyReleased(int key){
 void ofApp::mouseMoved(int x, int y)
 {
     float err = 5;
-    if(abs(_currCircle.pos.x - x) < err && abs(_currCircle.pos.y - y) < err)
+    if(_currCircle.isSameCircle(x,y,err))
     {
-        //same hole, radius augments in the update()
+        //same SoundCircle, radius augments in the update()
     }
     else
     {
-        // create a new hole, adding the previous to the hole vector
-        _circles.push_back(_currCircle);
-        _currCircle.pos = ofPoint((int)x,(int)y);
-        _currCircle.radius = 0.02;
-        _currCircle.lifetime = 50;
+        // add the previous circle to the circle vector
+        _currCircle.setColor(_circleDefaultColor.get());
+        _currCircle.setDashColor(_circleDefaultColor.get());
+        _soundCircles.push_back(_currCircle);
+
+        // "new" current circle
+        _currCircle.setup(ofPoint((int)x,(int)y),0.02,50);
+        _currCircle.setColor(_currentCircleColor.get());
+        _currCircle.setDashColor(_currentCircleColor.get());
     }
 }
 
@@ -472,9 +435,10 @@ void ofApp::mouseDragged(int x, int y, int button){
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button)
 {
-    _currCircle.pos = ofPoint(x,y);
+    /*_currCircle.pos = ofPoint(x,y);
     _currCircle.radius = 0.01;//ofGetElapsedTimef();
-    //_holes.push_back(ofPoint(x,y));
+
+*/
 }
 
 //--------------------------------------------------------------
@@ -484,10 +448,10 @@ void ofApp::mouseReleased(int x, int y, int button)
     //_currHole.radius *= 10;
     // ofLog() << "hole radius " << _currCircle.radius;
 
-    _circles.push_back(_currCircle);
+    /*_circles.push_back(_currCircle);
 
     _currCircle.radius = 0;
-
+*/
 }
 
 //--------------------------------------------------------------

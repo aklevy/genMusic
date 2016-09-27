@@ -1,6 +1,7 @@
 #pragma once
 
-#include "ofMain.h"
+//#include "ofMain.h"
+#include "soundCircle.h"
 #include "ofxGui.h"
 #include "ofxMaxim.h"
 
@@ -29,6 +30,8 @@ public:
     // callbacks
     void reset();
     void lineNbModified(int& newval);
+    void circleColModified(ofColor& newval);
+    void currentCircleColModified(ofColor& newval);
 
     //setup
     void setupGui();
@@ -38,6 +41,7 @@ public:
 
     // drawing method
     bool isLineMoving(float x);
+    void drawDashCircle(ofPoint pos, float radius, int lifetime);
     void draw();
 
 
@@ -76,20 +80,21 @@ private:
     ofParameter<ofColor>    _lineMovingColor;
 
     // lines
-    std::mutex _linemutex;
+    std::mutex              _lineMutex;
     std::vector<line>       _linesSound;
 
     // Circle parameters
     ofParameterGroup        _circleParameters;
     ofParameter<ofColor>    _circleDefaultColor;
     ofParameter<ofColor>    _currentCircleColor;
-    ofParameter<bool>       _circleFill;
+   // ofParameter<bool>       _circleFill;
     ofParameter<float>      _circleGrowingSpeed;
 
 
     // circles
-    std::vector<struct circle>  _circles;
-    struct circle _currCircle;
+    std::mutex              _circleMutex;
+    std::vector<SoundCircle>  _soundCircles;
+    SoundCircle _currCircle;
 
     // ofxMaxim param
     int		bufferSize; /* buffer size */
@@ -106,4 +111,5 @@ private:
     ofParameter<int>        _freqMod;
 
 
-    using lock = std::lock_guard<std::mutex>;};
+    using lock = std::lock_guard<std::mutex>;
+};
