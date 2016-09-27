@@ -12,22 +12,17 @@ ofApp::~ofApp()
 void ofApp::reset()
 {
     // _lineNb.set(50);
-    _soundCircles.clear();
+    _vecSoundCircles.clear();
 
     _currCircle.reset(50);
-    _currCircle.setColor(_currentCircleColor.get());
-    _currCircle.setDashColor(_currentCircleColor.get());
+  //  _currCircle.setColor(_currentCircleColor.get());
+  //  _currCircle.setDashColor(_currentCircleColor.get());
 
     // reset line vector
     lock lM(_lineMutex);
-    for(line& l : _linesSound)
+    for(SoundLine& l : _vecSoundLines)
     {
-        l.bPlay = false;
-        l.bMove = false;
-        l.offsetY = 0;
-
-        l.color = _lineDefaultColor;
-        l.oscSound.phaseReset(0);
+        l.reset();
     }
 
 }
@@ -35,16 +30,35 @@ void ofApp::reset()
 void ofApp::lineNbModified(int& newval)
 {
     lock lM(_lineMutex);
-    int oldSize = _linesSound.size();
+    int oldSize = _vecSoundLines.size();
     if(oldSize != newval)
-        _linesSound.resize(newval);
+        _vecSoundLines.resize(newval);
 
+}
+
+//--------------------------------------------------------------
+void ofApp::lineDefColModified(ofColor& newval)
+{
+    lock lM(_lineMutex);
+    for(SoundLine& l : _vecSoundLines)
+    {
+        l.setDefaultColor(newval);
+    }
+}
+//--------------------------------------------------------------
+void ofApp::lineMovColModified(ofColor& newval)
+{
+    lock lM(_lineMutex);
+    for(SoundLine& l : _vecSoundLines)
+    {
+        l.setMovingColor(newval);
+    }
 }
 //--------------------------------------------------------------
 void ofApp::circleColModified(ofColor& newval)
 {
     lock cM(_circleMutex);
-    for(SoundCircle& c : _soundCircles)
+    for(SoundCircle& c : _vecSoundCircles)
     {
         c.setColor(newval);
         c.setDashColor(newval);
@@ -89,14 +103,17 @@ void ofApp::setupGui()
     // line colors
     _lineParameters.add(_lineDefaultColor.set
                         ("lineDefaultColor",
-                         ofColor(0,0,50,255),
+                         ofColor(255,255,255,255),
                          ofColor(0,0,0,0),
                          ofColor(255,255,255,255)));
+    _lineDefaultColor.addListener(this,&ofApp::lineDefColModified);
+
     _lineParameters.add(_lineMovingColor.set
                         ("lineMovingColor",
                          ofColor(0,50,0,255),
                          ofColor(0,0,0,0),
                          ofColor(255,255,255,255)));
+    _lineMovingColor.addListener(this,&ofApp::lineMovColModified);
 
     /*
      *  Circle Parameters Group
@@ -131,7 +148,7 @@ void ofApp::setupGui()
      *  Sound Parameters Group
      */
     _soundParameters.setName("soundParameters");
-    _soundParameters.add(_freqMod.set("frequence",110,0,10000));
+    _soundParameters.add(_freqMod.set("frequence",0.5,0,10));
 
 
     // add parameters' group to the gui
@@ -161,20 +178,18 @@ void ofApp::setup()
     // circle
     _currCircle.setup(ofPoint(0),0,50);
 
-
     // setting up Gui
     setupGui();
 
     // setting up line sound vector
-    line l;
-    l.bMove = l.bPlay = false;
-    l.offsetY = 0;
-    l.color = _lineDefaultColor.get();
+    SoundLine l;
+    l.setDefaultColor(_lineDefaultColor.get());
+    l.setMovingColor(_lineMovingColor.get());
 
     lock lM(_lineMutex);
     for (int i = 0 ; i < _lineNb ; i++)
     {
-        _linesSound.push_back(l);
+        _vecSoundLines.push_back(l);
     }
 
 
@@ -182,12 +197,7 @@ void ofApp::setup()
     sampleRate 	= 44100; /* Sampling Rate */
     bufferSize	= 512; /* Buffer Size. you have to fill this buffer with sound using the for loop in the audioOut method */
     ofxMaxiSettings::setup(sampleRate, 2, bufferSize);
-    env.setAttack(1);
-    env.setDecay(1000);
-    env.setSustain(1000);
-    env.setRelease(1);
 
-    //mySample.load(ofToDataPath("sounds/beat.wav"));
     ofSoundStreamSetup(2,2,this, sampleRate, bufferSize, 4); /* this has to happen at the end of setup - it switches on the DAC */
 }
 
@@ -195,11 +205,11 @@ void ofApp::setup()
 void ofApp::update()
 {
     //update current circle's radius using growing speed
-    bool bLimit = (_soundCircles.size()%2 == 0 );
+    bool bLimit = (_vecSoundCircles.size()%2 == 0 );
     _currCircle.updateRadius(_circleGrowingSpeed.get(), bLimit);
 
     // update circle lifetime
-    for(SoundCircle& c : _soundCircles)
+    for(SoundCircle& c : _vecSoundCircles)
     {
         c.update(1);
     }
@@ -207,41 +217,26 @@ void ofApp::update()
 
     // update line structure contained in the vector linesSound
     int lineX = 0;
+    int offsetY = 0;
     float stepX = (float) _windowWidth / _lineNb ;
 
     lock l(_lineMutex);
-    for(line& l : _linesSound)
+    for(SoundLine& l : _vecSoundLines)
     {
-        if(!l.bMove)
-            l.bMove = isLineMoving(lineX);
+        if(!l.isMoving())
+        {
+            l.setMove(isLineMoving(lineX));
+        }
 
-        if(l.bMove)
+        if(l.isMoving())
         {
-            l.bMove = true;
-            l.offsetY = (int)_lineAmplitude *sin(_lineFrequence*lineX/_windowWidth*ofGetElapsedTimef());
-            // play sound ?
-            if(abs(l.offsetY) < 30 ) // hitting the upper screen limit
-            {
-                l.bPlay = true;
-                l.color = ofColor(255,0,0);
-            }
-            else
-            {
-                l.bPlay = false;
-                l.color = _lineMovingColor;
-            }
+            offsetY =(int)_lineAmplitude *sin(sqrt(_lineFrequence)*lineX/_windowWidth*ofGetElapsedTimef());
         }
-        else
-        {
-            l.offsetY =  0;
-            l.bMove = false;
-            l.bPlay = false;
-            l.color = _lineDefaultColor;
-        }
+
+        l.update(lineX,offsetY);
 
         // move along the x axis by stepX
         lineX += (int)stepX;
-
     }
 }
 
@@ -254,7 +249,7 @@ bool ofApp::isLineMoving(float x)
 
     // check other circles
     lock c(_circleMutex);
-    for (SoundCircle& c : _soundCircles)
+    for (SoundCircle& c : _vecSoundCircles)
     {
         if(c.isTouchingLine(x))
             return true;
@@ -269,24 +264,15 @@ void ofApp::draw()
     //draw lines
     ofPushStyle();
 
-    //ofSetLineWidth(_lineWidth);
+   // ofSetLineWidth();
     int lineX = 0;
     float stepX = (float) _windowWidth / _lineNb ;
 
     lock l(_lineMutex);
-    for(line& l : _linesSound)
+    for(SoundLine& l : _vecSoundLines)
     {
+        l.drawSoundLine(lineX,_windowHeight,_lineWidth);
 
-        glLineWidth(_lineWidth);
-        glColor3f(l.color.r/255., l.color.g/255., l.color.b/255.);
-        glBegin(GL_LINES);
-        glVertex3f(lineX, l.offsetY, 0.0);
-        glVertex3f(lineX, _windowHeight + l.offsetY, 0);
-        glEnd();
-        /*
-          ofSetColor(l.color);
-        ofDrawLine(lineX, l.offsetY , lineX, h + l.offsetY);
-        */
         lineX += stepX;
     }
 
@@ -298,7 +284,7 @@ void ofApp::draw()
     ofEnableSmoothing();
 
     lock c(_circleMutex);
-    for (SoundCircle& c : _soundCircles)
+    for (SoundCircle& c : _vecSoundCircles)
     {
         c.drawSoundCircle();
     }
@@ -321,76 +307,42 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels)
     lock l(_lineMutex);
     for (int i = 0; i < bufferSize; i++){
 
-
-        //make 'wave' equal something noisy
-        //if(_sound)
+        // get lines's sound
         int lineX = 0;
-        //int lineOffsetY = 0;
         float stepX = (float) _windowWidth / _lineNb ;
 
-
-        for(line& l : _linesSound)
+        for(SoundLine& l : _vecSoundLines)
         {
-            if(l.bPlay)
+            float soundL = l.getSound(lineX/_windowWidth);
+            if(soundL)
             {
-
-                /*
-                float sawFreq = maxiMap::linexp(lineX,0, _windowWidth, 1000, 15000);
-                float w = sawOsc.saw(sawFreq);
-
-                w = dist.atanDist(w, 10);
-
-                float filtFreq = maxiMap::linexp(lineX,0, _windowHeight, 1000, 15000);
-                w = filt.hires(w, filtFreq, 0.4);
-*/
-                // w = 1000 * sin(i*400);//maxiMap::linexp(lineX,0, _windowWidth, 1000, 15000);
-
-                // float w = sawOsc.pulse(55,0.6);
-                float w = l.oscSound.sinewave(440+440*lineX/_windowWidth);
-                //             w = sawOsc.pulse(110+w,0.2);//it's a pulse wave at 110hz with LFO modulation on the frequency, and width of 0.2
-                //float adsrOut = env.adsr(w,1000,1000,1000,1000);
-                float adsrOut = env.adsr(1.0,env.trigger);
-
-                //  w = filt.lores(w,adsrOut*10000,10);
-                w*= adsrOut;
-                env.trigger = 1;
-
-                //w = sawOsc.pulse(_freqMod.get()+w,0.2);//it's a pulse wave at 110hz with LFO modulation on the frequency, and width of 0.2
-                output[i * nChannels] += w;
-                output[i * nChannels +1] += w;
+                output[i * nChannels] += soundL;
+                output[i * nChannels +1] += soundL;
             }
             lineX += stepX;
         }
-        //circle sound
-        for(SoundCircle& c : _soundCircles)
+        //get circles' sound
+        for(SoundCircle& c : _vecSoundCircles)
         {
-            float sound = c.getSound();
-            if(sound)
+            float soundC = c.getSound();
+            if(soundC)
             {
-                output[i * nChannels] += sound;
-                output[i * nChannels +1] += sound;
+                output[i * nChannels] += soundC;
+                output[i * nChannels +1] += soundC;
             }
         }
 
-        // play current circle
+        // get current circle's sound
         float soundCurr = _currCircle.getSound();
         if(soundCurr)
         {
             output[i * nChannels] += soundCurr;
             output[i * nChannels +1] += soundCurr;
         }
-
-        //double wave = mySample.play(0.5);
-
-
-        //          output[i*nChannels    ] = wave; /* You may end up with lots of outputs. add them here */
-        //        output[i*nChannels + 1] = wave;
-
-
     }
 
 
-    int n = _linesSound.size()+5; //get playing circle number
+    int n = _vecSoundLines.size()+5; //get playing circle number
     if(n > 1)
         for(int i = 0 ; i < bufferSize * nChannels; i++) output[i] /= n;
 }
@@ -418,10 +370,10 @@ void ofApp::mouseMoved(int x, int y)
         // add the previous circle to the circle vector
         _currCircle.setColor(_circleDefaultColor.get());
         _currCircle.setDashColor(_circleDefaultColor.get());
-        _soundCircles.push_back(_currCircle);
+        _vecSoundCircles.push_back(_currCircle);
 
         // "new" current circle
-        _currCircle.setup(ofPoint((int)x,(int)y),0.02,50);
+        _currCircle.setup(ofPoint((int)x,(int)y),0.2,50);
         _currCircle.setColor(_currentCircleColor.get());
         _currCircle.setDashColor(_currentCircleColor.get());
     }
@@ -470,12 +422,3 @@ void ofApp::windowResized(int w, int h){
     _windowHeight = h;
 }
 
-//--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
-
-}

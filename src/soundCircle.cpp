@@ -49,7 +49,7 @@ void SoundCircle::updateRadius(float speed, bool bLimit)
     else
     {
 
-        _radius += speed*(_radius>30?-1:1)*0.2;
+        _radius += speed*(_radius>50?-1:1)*0.2;
     }
 }
 //--------------------------------------------------------------

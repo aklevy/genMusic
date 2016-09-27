@@ -2,18 +2,12 @@
 
 //#include "ofMain.h"
 #include "soundCircle.h"
+#include "soundLine.h"
+
 #include "ofxGui.h"
 #include "ofxMaxim.h"
 
-struct circle
-{
-    ofPoint pos;
-    float radius;
 
-    maxiOsc oscSound;
-    int lifetime;
-
-};
 struct line
 {
     bool bPlay;
@@ -27,9 +21,11 @@ class ofApp : public ofBaseApp{
 public:
     ~ofApp();
 
-    // callbacks
+    // listeners
     void reset();
     void lineNbModified(int& newval);
+    void lineDefColModified(ofColor& newval);
+    void lineMovColModified(ofColor& newval);
     void circleColModified(ofColor& newval);
     void currentCircleColModified(ofColor& newval);
 
@@ -59,13 +55,13 @@ public:
     void mouseEntered(int x, int y);
     void mouseExited(int x, int y);
     void windowResized(int w, int h);
-    void dragEvent(ofDragInfo dragInfo);
-    void gotMessage(ofMessage msg);
+
 
 private:
 
     float       _windowWidth;
     float       _windowHeight;
+
     //gui
     ofxPanel    _gui;
     ofxButton    _reset;
@@ -81,7 +77,7 @@ private:
 
     // lines
     std::mutex              _lineMutex;
-    std::vector<line>       _linesSound;
+    std::vector<SoundLine>  _vecSoundLines;
 
     // Circle parameters
     ofParameterGroup        _circleParameters;
@@ -93,18 +89,12 @@ private:
 
     // circles
     std::mutex              _circleMutex;
-    std::vector<SoundCircle>  _soundCircles;
+    std::vector<SoundCircle>  _vecSoundCircles;
     SoundCircle _currCircle;
 
     // ofxMaxim param
     int		bufferSize; /* buffer size */
     int		sampleRate;
-    maxiOsc sawOsc;
-    maxiFilter filt;
-    maxiDistortion dist;
-    maxiEnv         env;
-
-    maxiSample mySample;
 
     // sound param
     ofParameterGroup        _soundParameters;
