@@ -5,8 +5,9 @@
 #include "soundLine.h"
 
 #include "ofxGui.h"
-#include "ofxMaxim.h"
-
+//#include "ofxMaxim.h"
+//#include "parameter.hpp"
+//#include "network.hpp"
 
 struct line
 {
@@ -23,9 +24,12 @@ public:
 
     // listeners
     void reset();
+    void changeInput(bool& newval);
+
     void lineNbModified(int& newval);
     void lineDefColModified(ofColor& newval);
     void lineMovColModified(ofColor& newval);
+
     void circleColModified(ofColor& newval);
     void currentCircleColModified(ofColor& newval);
 
@@ -35,9 +39,11 @@ public:
 
     void update();
 
+    // checking if the line should be moving (i.e. touching circle)
+    bool isLineTouchingCircle(float x);
+
     // drawing method
-    bool isLineMoving(float x);
-    void drawDashCircle(ofPoint pos, float radius, int lifetime);
+    void drawInFbo();
     void draw();
 
 
@@ -66,6 +72,7 @@ private:
     //gui
     ofxPanel    _gui;
     ofxButton    _reset;
+    ofParameter<bool>       _inputHotHand;
 
     // line parameters
     ofParameterGroup        _lineParameters;
@@ -85,7 +92,6 @@ private:
     ofParameter<ofColor>    _circleDefaultColor;
     ofParameter<ofColor>    _currentCircleColor;
     ofParameter<bool>       _drawAllCircles;
-
    // ofParameter<bool>       _circleFill;
     ofParameter<float>      _circleGrowingSpeed;
 

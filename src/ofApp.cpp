@@ -8,7 +8,6 @@ ofApp::~ofApp()
     _lineNb.removeListener(this,&ofApp::lineNbModified);
 
 }
-
 //--------------------------------------------------------------
 void ofApp::reset()
 {
@@ -34,6 +33,23 @@ void ofApp::reset()
         _fbo.end();
     }
 }
+//--------------------------------------------------------------
+void ofApp::changeInput(bool& newval)
+{
+    // add the current circle to the circle vector
+    _currCircle.setColor(_circleDefaultColor.get());
+    _currCircle.setDashColor(_circleDefaultColor.get());
+    lock lc(_circleMutex);
+    _vecSoundCircles.push_back(_currCircle);
+    _currCircle.reset(50);
+
+    if(newval) // change to hot hand input
+    {}
+    else // change to mouse input
+    {}
+}
+
+
 //--------------------------------------------------------------
 void ofApp::lineNbModified(int& newval)
 {
@@ -89,6 +105,9 @@ void ofApp::setupGui()
     _gui.add(_reset.setup("Reset"));//_reset.setup(_nw.getSceneNode(),"reset",false));
     _reset.addListener(this,&ofApp::reset);
 
+    // add input choosing button
+    _gui.add(_inputHotHand.set("InputHotHand",false));//_reset.setup(_nw.getSceneNode(),"reset",false));
+    _inputHotHand.addListener(this,&ofApp::changeInput);
 
     /*
      *  Line Parameters Group
@@ -152,7 +171,7 @@ void ofApp::setupGui()
     _circleParameters.add(_circleGrowingSpeed.set("circleGrowth",1,0,5));//_reset.setup(_nw.getSceneNode(),"reset",false));
 
     // draw all the circles (even if they do not emit any sound)
-    _circleParameters.add(_drawAllCircles.set("historic",false));//_reset.setup(_nw.getSceneNode(),"reset",false));
+    _circleParameters.add(_drawAllCircles.set("history",false));//_reset.setup(_nw.getSceneNode(),"reset",false));
 
 
     /*
@@ -226,9 +245,11 @@ void ofApp::setup()
 void ofApp::update()
 {
     //update current circle's radius using growing speed
-    bool bLimit = (_vecSoundCircles.size()%2 == 0 );
-    _currCircle.updateRadius(_circleGrowingSpeed.get(), bLimit);
-
+    if(_currCircle.isReady())
+    {
+        bool bLimit = (_vecSoundCircles.size()%2 == 0 );
+        _currCircle.updateRadius(_circleGrowingSpeed.get(), bLimit);
+    }
     // erase unplaying sound circle
     if(_vecSoundCircles.size())
     {
@@ -258,7 +279,7 @@ void ofApp::update()
     {
         if(!l.isMoving())
         {
-            l.setMove(isLineMoving(lineX));
+            l.setMove(isLineTouchingCircle(lineX));
         }
 
         if(l.isMoving())
@@ -274,7 +295,7 @@ void ofApp::update()
 }
 
 //--------------------------------------------------------------
-bool ofApp::isLineMoving(float x)
+bool ofApp::isLineTouchingCircle(float x)
 {
     // check first for current hole
     if(_currCircle.isTouchingLine(x))
@@ -290,11 +311,38 @@ bool ofApp::isLineMoving(float x)
 
     return false;
 }
+//--------------------------------------------------------------
+void ofApp::drawInFbo()
+{
+    if(_vecSoundCircles.size() > 0 && _fbo.isAllocated())
+    {
+        _fbo.begin();
 
+        //ofPushStyle();
+
+        lock c(_circleMutex);
+        for (SoundCircle& c : _vecSoundCircles)
+        {
+            if(c.getSoundDuration() <= 0 && !c.isToBeRemoved())
+            {
+                c.toBeRemoved();
+                c.drawSoundCircle();
+
+            }
+        }
+        //ofPopStyle();
+        _fbo.end();
+    }
+
+
+}
 //--------------------------------------------------------------
 void ofApp::draw()
 {
-    //draw lines
+    /*
+     * Draw lines
+     * */
+
     ofPushStyle();
 
     // ofSetLineWidth();
@@ -316,40 +364,14 @@ void ofApp::draw()
      * Draw circles
      * */
 
-    // if there are no new circles, draw fbo texture
-    //ofTexture fboTex = _fbo.getTexture();
+    // drawing all the circles in fbo and setting to be removed in update()
+    drawInFbo();
 
-
-    if(_vecSoundCircles.size() > 0 && _fbo.isAllocated())
-        // draw the new circles in the texture
-    {
-        _fbo.begin();
-        //ofPushStyle();
-
-        lock c(_circleMutex);
-        for (SoundCircle& c : _vecSoundCircles)
-        {
-            if(c.getSoundDuration() <= 0 && !c.isToBeRemoved())
-            {
-                c.toBeRemoved();
-                c.drawSoundCircle();
-
-            }
-        }
-        //ofPopStyle();
-        _fbo.end();
-
-        //  _fbo.draw(0,0);
-
-    }
+    // display the texture in fbo
     if(_fbo.isAllocated() && _drawAllCircles)
         _fbo.draw(0,0);
-    /*_fbo.getTexture().draw(ofPoint(0,0,0),
-                               ofPoint(_windowWidth,0,0),
-                               ofPoint(0,_windowHeight,0),
-                              ofPoint(_windowWidth,_windowHeight,0));
-   */
-    // draw playing sound
+
+    // draw every playing sound
     ofPushStyle();
 
     lock c(_circleMutex);
@@ -359,11 +381,14 @@ void ofApp::draw()
             c.drawSoundCircle();
     }
 
-    _currCircle.drawSoundCircle();
+    if(_currCircle.isReady())   _currCircle.drawSoundCircle();
 
     ofPopStyle();
 
-    // drawing gui
+    /*
+     * Draw UI
+     * */
+
     _gui.draw();
     ofSetWindowTitle(ofToString(ofGetFrameRate()));
 }
@@ -434,6 +459,15 @@ void ofApp::keyReleased(int key){
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y)
 {
+    if(_inputHotHand)
+    {
+
+        return;
+    }
+
+    // mouse moved : curent circle is ready to grown
+    _currCircle.setReady(true);
+
     float err = 10;
     if(_currCircle.isSameCircle(x,y,err) || _vecSoundCircles.size() > 50)
     {

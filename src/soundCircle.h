@@ -30,6 +30,10 @@ public:
 
     void toBeRemoved(){_bErase = true;}
     bool isToBeRemoved(){return _bErase;}
+
+    void setReady(bool val){_bReady =val;}
+    bool isReady(){return _bReady;}
+
 private:
     // shape parameters
     ofPoint     _position;
@@ -45,5 +49,7 @@ private:
     maxiOsc     _oscSound;
     maxiFilter  _filterSound;
     int         _soundDuration;
-    bool        _bErase;
+    bool        _bErase; //to be removed from the vector
+
+    bool        _bReady;
 };

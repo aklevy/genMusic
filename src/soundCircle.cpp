@@ -7,7 +7,8 @@ SoundCircle::SoundCircle ()
       _radius(0.),
       _soundDuration(50),
       _dashWidth(3),
-      _bErase(false)
+      _bErase(false),
+      _bReady(false)
 {
 
     _envSound.setAttack(1);
@@ -19,6 +20,8 @@ SoundCircle::SoundCircle ()
 
 void SoundCircle::reset(int soundDur)
 {
+
+    _bReady = false;
     setup(ofPoint(0,0),0.,soundDur);
 }
 
