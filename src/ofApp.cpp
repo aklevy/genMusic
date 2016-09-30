@@ -5,9 +5,22 @@
 ofApp::~ofApp()
 {
     _reset.removeListener(this,&ofApp::reset);
+    _inputHotHand.removeListener(this,&ofApp::changeInput);
+    _valueHotHand.removeListener(this,&ofApp::inputFromHotHand);
+
     _lineNb.removeListener(this,&ofApp::lineNbModified);
+    _lineDefaultColor.removeListener(this,&ofApp::lineDefColModified);
+    _lineMovingColor.removeListener(this,&ofApp::lineMovColModified);
+    _circleDefaultColor.removeListener(this,&ofApp::circleColModified);
+    _currentCircleColor.removeListener(this,&ofApp::currentCircleColModified);
+
 
 }
+//--------------------------------------------------------------
+ofApp::ofApp():
+    _nw("genMusic", "i-score","127.0.0.1",13579, 9998)
+{}
+
 //--------------------------------------------------------------
 void ofApp::reset()
 {
@@ -43,20 +56,34 @@ void ofApp::changeInput(bool& newval)
     _vecSoundCircles.push_back(_currCircle);
     _currCircle.reset(50);
 
-    if(newval) // change to hot hand input
+  /*  if(newval) // change to hot hand input
     {}
     else // change to mouse input
-    {}
+    {}*/
 }
 
 
 //--------------------------------------------------------------
 void ofApp::lineNbModified(int& newval)
 {
-    lock lM(_lineMutex);
     int oldSize = _vecSoundLines.size();
+    lock lM(_lineMutex);
     if(oldSize != newval)
+    {
         _vecSoundLines.resize(newval);
+      //  lock lM(_lineMutex);
+
+        if(oldSize < newval)
+        {
+            for(SoundLine& l : _vecSoundLines)
+            {
+                l.setDefaultColor(_lineDefaultColor);
+                l.setMovingColor(_lineMovingColor);
+            }
+
+        }
+    }
+
 
 }
 
@@ -106,8 +133,13 @@ void ofApp::setupGui()
     _reset.addListener(this,&ofApp::reset);
 
     // add input choosing button
-    _gui.add(_inputHotHand.set("InputHotHand",false));//_reset.setup(_nw.getSceneNode(),"reset",false));
+    _gui.add(_inputHotHand.set("InputHotHand",false));
     _inputHotHand.addListener(this,&ofApp::changeInput);
+
+    // adding the input from the hot hand
+    _gui.add(_valueHotHand.set("valueHotHand",ofVec3f(0),ofVec3f(0),ofVec3f(1)));
+    //_gui.add(_valueHotHand.setup(_nw.getSceneNode(),"valueHotHand",ofVec3f(0),ofVec3f(-360),ofVec3f(360)));
+    _valueHotHand.addListener(this,&ofApp::inputFromHotHand);
 
     /*
      *  Line Parameters Group
@@ -119,7 +151,7 @@ void ofApp::setupGui()
     _lineNb.addListener(this,&ofApp::lineNbModified);
 
     // line width
-    _lineParameters.add(_lineWidth.set("lineWidth",5,0,10));
+    _lineParameters.add(_lineWidth.set("lineWidth",5,0.1,10));
 
     // line amplitude
     _lineParameters.add(_lineAmplitude.set("lineAmplitude",200,1,500));
@@ -445,27 +477,10 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels)
     if(n > 1)
         for(int i = 0 ; i < bufferSize * nChannels; i++) output[i] /= n;
 }
-
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y)
+void ofApp::inputToCircle(int x, int y, float z)
 {
-    if(_inputHotHand)
-    {
-
-        return;
-    }
-
-    // mouse moved : curent circle is ready to grown
+    // getting input : current circle is ready to grown
     _currCircle.setReady(true);
 
     float err = 10;
@@ -486,6 +501,40 @@ void ofApp::mouseMoved(int x, int y)
         _currCircle.setColor(_currentCircleColor.get());
         _currCircle.setDashColor(_currentCircleColor.get());
     }
+}
+
+//--------------------------------------------------------------
+void ofApp::inputFromHotHand(ofVec3f& newval)
+{
+    // remapping to the screen dimension
+    int x = newval.x * _windowWidth;
+    int y = newval.y * _windowHeight;
+
+    inputToCircle(x, y, newval.z );
+}
+
+//--------------------------------------------------------------
+void ofApp::keyPressed(int key){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::keyReleased(int key){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseMoved(int x, int y)
+{
+    if(_inputHotHand)
+    {
+        return;
+    }
+
+    // updating current circle (and creating other if necessary)
+    // according to the mouse movements
+    inputToCircle(x,y);
+
 }
 
 //--------------------------------------------------------------

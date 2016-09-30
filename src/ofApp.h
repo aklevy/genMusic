@@ -6,7 +6,7 @@
 
 #include "ofxGui.h"
 //#include "ofxMaxim.h"
-//#include "parameter.hpp"
+#include "parameter.hpp"
 //#include "network.hpp"
 
 struct line
@@ -21,10 +21,13 @@ struct line
 class ofApp : public ofBaseApp{
 public:
     ~ofApp();
+    ofApp();
 
     // listeners
     void reset();
     void changeInput(bool& newval);
+
+    void inputFromHotHand(ofVec3f &newval);
 
     void lineNbModified(int& newval);
     void lineDefColModified(ofColor& newval);
@@ -48,9 +51,9 @@ public:
 
 
     // Audio output and input methods
-
     void audioOut(float * output, int bufferSize, int nChannels);
 
+    void inputToCircle(int x, int y, float z = 0.);
 
     void keyPressed(int key);
     void keyReleased(int key);
@@ -67,13 +70,15 @@ private:
 
     float       _windowWidth;
     float       _windowHeight;
-    ofFbo               _fbo;
+
+    // Network for communication with i-score
+    Network             _nw;
 
     //gui
     ofxPanel    _gui;
     ofxButton    _reset;
     ofParameter<bool>       _inputHotHand;
-
+    ofParameter<ofVec3f>    _valueHotHand;
     // line parameters
     ofParameterGroup        _lineParameters;
     ofParameter<int>        _lineNb;
@@ -100,6 +105,7 @@ private:
     std::mutex              _circleMutex;
     std::vector<SoundCircle>  _vecSoundCircles;
     SoundCircle _currCircle;
+    ofFbo               _fbo; // fbo containing circles' drawings
 
     // ofxMaxim param
     int		bufferSize; /* buffer size */

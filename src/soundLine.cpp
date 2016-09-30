@@ -56,7 +56,7 @@ void SoundLine::update(float x, int y)
 void SoundLine::drawSoundLine(float x, float winHeight, float lineWidth)
 {
     glLineWidth(lineWidth);
-    glColor3f(_lineColor.r/255.,_lineColor.g/255.,_lineColor.b/255.);
+    glColor4f(_lineColor.r/255.,_lineColor.g/255.,_lineColor.b/255.,_lineColor.a/255.);
     glBegin(GL_LINES);
     glVertex3f(x, _offsetY, 0.0);
     glVertex3f(x, winHeight + _offsetY, 0);

@@ -24,7 +24,7 @@ Project{
         of.addons: [
             'ofxGui',
             'ofxMaxim',
-           // 'ofxOSSIA'
+            'ofxOSSIA'
         ]
 
 
