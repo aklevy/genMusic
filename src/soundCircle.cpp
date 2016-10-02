@@ -12,9 +12,16 @@ SoundCircle::SoundCircle ()
 {
 
     _envSound.setAttack(1);
-    _envSound.setDecay(1000);
+    _envSound.setDecay(10);
     _envSound.setSustain(1000);
-    _envSound.setRelease(1);
+    _envSound.setRelease(5000);
+
+    _envSound.holdcount=0;
+    _envSound.decayphase=0;
+    _envSound.sustainphase=0;
+    _envSound.releasephase=0;
+    _envSound.attackphase=1;
+    _envSound.amplitude = 1.;
 }
 //--------------------------------------------------------------
 
@@ -23,6 +30,8 @@ void SoundCircle::reset(int soundDur)
 
     _bReady = false;
     setup(ofPoint(0,0),0.,soundDur);
+
+
 }
 
 //--------------------------------------------------------------
@@ -35,6 +44,19 @@ void SoundCircle::setup(ofPoint pos, float rad, int soundDur)
     _soundDuration = soundDur;
     _bErase = false;
 
+
+    _envSound.setAttack(1);
+    _envSound.setDecay(10);
+    _envSound.setSustain(1000);
+    _envSound.setRelease(5000);
+
+    _envSound.holdcount=0;
+    _envSound.decayphase=0;
+    _envSound.sustainphase=0;
+    _envSound.releasephase=0;
+    _envSound.attackphase=1;
+    _envSound.amplitude = 1.;
+    _triggered = 1;
 }
 
 //--------------------------------------------------------------
@@ -62,6 +84,8 @@ void SoundCircle::updateRadius(float speed, bool bLimit)
 
         _radius += speed*(_radius>50?-1:1)*0.2;
     }
+    _envSound.setRelease(1000+2000*_radius);
+
 }
 //--------------------------------------------------------------
 
@@ -129,25 +153,31 @@ float SoundCircle::getSound()
         // float w = sawOsc.pulse(55,0.6);
         float modR = _radius/2;//150 + _radius * 100;
 
-        float soundSin = _oscSound.sinewave(82+_position.x+0.2);
-        soundSin += modR*_oscSound.sinewave(65+_position.y);
+        float pulse = _oscSound.sinewave(440+440*0.2);
+
+       /* float soundSin = _oscSound.sinewave(82+_position.x+0.2);*/
+
+
+
+       // soundSin += modR*_oscSound.sinewave(65+_position.y);
       //  soundSin += 2*modR*_oscSound.sinewave(32+0.2);
 
        // soundSin += _oscSound.sinewave(65*modR+0.2);
         //soundSin += _oscSound.saw(_position.x);
         //  soundSin += _oscSound.sinewave(97*modY+0.5);
-float pulse = soundSin;
 //        float pulse = _oscSound.pulse(soundSin,0.6);
         //             w = sawOsc.pulse(110+w,0.2);//it's a pulse wave at 110hz with LFO modulation on the frequency, and width of 0.2
         //float adsrOut = env.adsr(w,1000,1000,1000,1000);
-        float adsrOut = _envSound.adsr(1.0,_envSound.trigger);
+
+        float adsrOut = _envSound.adsr(pulse, _triggered);
+
+        _triggered = 0;
 
         //  w = filt.lores(w,adsrOut*10000,10);
-        pulse *= adsrOut;
-        _envSound.trigger = 1;
+      //  pulse *= adsrOut;
 
         //w = sawOsc.pulse(_freqMod.get()+w,0.2);//it's a pulse wave at 110hz with LFO modulation on the frequency, and width of 0.2
-        return pulse;
+        return adsrOut;
     }
     return 0.;
 }

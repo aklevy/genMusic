@@ -56,7 +56,7 @@ void ofApp::changeInput(bool& newval)
     _vecSoundCircles.push_back(_currCircle);
     _currCircle.reset(50);
 
-  /*  if(newval) // change to hot hand input
+    /*  if(newval) // change to hot hand input
     {}
     else // change to mouse input
     {}*/
@@ -71,7 +71,7 @@ void ofApp::lineNbModified(int& newval)
     if(oldSize != newval)
     {
         _vecSoundLines.resize(newval);
-      //  lock lM(_lineMutex);
+        //  lock lM(_lineMutex);
 
         if(oldSize < newval)
         {
@@ -211,8 +211,8 @@ void ofApp::setupGui()
      */
     _soundParameters.setName("soundParameters");
     _soundParameters.add(_freqMod.set("frequence",0.5,0,10));
-    _soundParameters.add(_volumeLine.set("volumeLine",3.,0,5));
-    _soundParameters.add(_volumeCircle.set("volumeCircle",0.3,0,5));
+    _soundParameters.add(_volumeLine.set("volumeLine",1.,0,1));
+    _soundParameters.add(_volumeCircle.set("volumeCircle",1.0,0,1.));
 
 
     // add parameters' group to the gui
@@ -428,6 +428,8 @@ void ofApp::draw()
 //--------------------------------------------------------------
 void ofApp::audioOut(float * output, int bufferSize, int nChannels)
 {
+    float vl = _volumeLine.get();
+    float vc = _volumeCircle.get();
 
     for(int i = 0 ; i < bufferSize * nChannels; i++) output[i] = 0;
 
@@ -441,12 +443,10 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels)
         lock l(_lineMutex);
         for(SoundLine& l : _vecSoundLines)
         {
-            float soundL = _volumeLine * l.getSound((float)lineX/_windowWidth);
-            if(soundL )
-            {
-                output[i * nChannels] += soundL;
-                output[i * nChannels +1] += soundL;
-            }
+            float soundL =  5 * vl * l.getSound((float)lineX/_windowWidth);
+            output[i * nChannels] += soundL;
+            output[i * nChannels +1] += soundL;
+
             lineX += stepX;
         }
 
@@ -455,25 +455,22 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels)
         lock lc(_circleMutex);
         for(SoundCircle& c : _vecSoundCircles)
         {
-            float soundC = _volumeCircle * c.getSound();
-            if(soundC)
-            {
+            float soundC = 30 * vc * c.getSound();
                 output[i * nChannels] += soundC ;
                 output[i * nChannels +1] += soundC ;
-            }
+
         }
 
         // get current circle's sound
-        float soundCurr = _volumeCircle * _currCircle.getSound();
-        if(soundCurr)
-        {
-            output[i * nChannels] += soundCurr;
-            output[i * nChannels +1] += soundCurr;
-        }
+        float soundCurr =  30 * vc * _currCircle.getSound();
+
+        output[i * nChannels] += soundCurr;
+        output[i * nChannels +1] += soundCurr;
+
     }
 
 
-    int n = _vecSoundLines.size() + _vecSoundCircles.size() + 1;//+5; //get playing circle number
+    int n = _vecSoundLines.size() +1;//+ _vecSoundCircles.size() + 1;//+5; //get playing circle number
     if(n > 1)
         for(int i = 0 ; i < bufferSize * nChannels; i++) output[i] /= n;
 }
@@ -515,7 +512,7 @@ void ofApp::inputFromHotHand(ofVec3f& newval)
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+ofLog ()<< _volumeCircle;
 }
 
 //--------------------------------------------------------------

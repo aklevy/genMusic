@@ -87,13 +87,14 @@ float SoundLine::getSound(float xMod)
 
         //             w = sawOsc.pulse(110+w,0.2);//it's a pulse wave at 110hz with LFO modulation on the frequency, and width of 0.2
         //float adsrOut = env.adsr(w,1000,1000,1000,1000);
-             float adsrOut = _envSound.adsr(1.0,_envSound.trigger);
+             float adsrOut = _envSound.adsr(sound, 1, 1, 1, 1, 1, _envSound.trigger);
 
         //  w = filt.lores(w,adsrOut*10000,10);
-        sound *= adsrOut;
+      //  sound *= adsrOut;
+
         _envSound.trigger = 1;
 
-        return sound;
+        return adsrOut;
     }
     return 0.;
 }

@@ -52,4 +52,5 @@ private:
     bool        _bErase; //to be removed from the vector
 
     bool        _bReady;
+    bool _triggered = true;
 };
