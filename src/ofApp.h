@@ -89,33 +89,43 @@ private:
     ossia::Parameter<float>      _sepLineX;
     ossia::Parameter<float>      _sepLineWidth;
     bool                    _sepLineSelected;
+
+    /*
+     *  Sound Lines
+     *
+     * */
+
     // line parameters
-    ofParameterGroup        _lineParameters;
-    ossia::Parameter<int>        _lineNb;
-    ossia::Parameter<float>      _lineWidth;
-    ossia::Parameter<float>      _lineAmplitude;
-    ossia::Parameter<float>      _lineFrequence;
-    ofParameter<ofColor>    _lineDefaultColor;
-    ofParameter<ofColor>    _lineMovingColor;
+    ofParameterGroup            _lineParameters;
+    ossia::Parameter<int>       _lineNb;
+    ossia::Parameter<float>     _lineWidth;
+    ossia::Parameter<float>     _lineAmplitude;
+    ossia::Parameter<float>     _lineFrequence;
+    ofParameter<ofColor>        _lineDefaultColor;
+    ofParameter<ofColor>        _lineMovingColor;
 
     // lines
-    std::mutex              _lineMutex;
-    std::vector<SoundLine>  _vecSoundLines;
+    std::mutex                  _lineMutex;
+    std::vector<SoundLine>      _vecSoundLines;
 
+    /*
+     *  Sound Circles
+     *
+     * */
     // Circle parameters
     ofParameterGroup        _circleParameters;
     ofParameter<ofColor>    _circleDefaultColor;
     ofParameter<ofColor>    _currentCircleColor;
     ofParameter<bool>       _drawAllCircles;
-   // ofParameter<bool>       _circleFill;
+    // ofParameter<bool>       _circleFill;
     ofParameter<float>      _circleGrowingSpeed;
 
 
     // circles
     std::mutex              _circleMutex;
-    std::vector<SoundCircle>  _vecSoundCircles;
-    SoundCircle _currCircle;
-    ofFbo               _fbo; // fbo containing circles' drawings
+    std::vector<SoundCircle> _vecSoundCircles;
+    SoundCircle             _currCircle;
+    ofFbo                   _fbo; // fbo containing circles' drawings
 
     // ofxMaxim param
     int		bufferSize; /* buffer size */

@@ -13,10 +13,10 @@ public:
     void update(float x, int y);
 
     // drawing method
-    void drawSoundLine(float x, float winHeight, float lineWidth);
+    void drawSoundLine(float x, float winHeight, float lineWidth, float sepLineX);
 
     // sound method
-    float getSound(float x);
+    float getSound(float x, float sepLineX);
 
     void setDefaultColor(ofColor col){_lineDefaultColor = col;}
     void setMovingColor(ofColor col){_lineMovingColor = col;}

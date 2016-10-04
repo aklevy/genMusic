@@ -4,7 +4,7 @@
 //--------------------------------------------------------------
 ofApp::~ofApp()
 {
-   _lineDefaultColor.removeListener(this,&ofApp::lineDefColModified);
+    _lineDefaultColor.removeListener(this,&ofApp::lineDefColModified);
     _lineMovingColor.removeListener(this,&ofApp::lineMovColModified);
     _circleDefaultColor.removeListener(this,&ofApp::circleColModified);
     _currentCircleColor.removeListener(this,&ofApp::currentCircleColModified);
@@ -12,7 +12,7 @@ ofApp::~ofApp()
 }
 //--------------------------------------------------------------
 ofApp::ofApp():
-    _nw("genMusic", "i-score","127.0.0.1",13579, 9998)
+    _nw("kaleidoSound","i-score","127.0.0.1",13579, 9998)
 {}
 
 //--------------------------------------------------------------
@@ -99,6 +99,7 @@ void ofApp::lineMovColModified(ofColor& newval)
         l.setMovingColor(newval);
     }
 }
+
 //--------------------------------------------------------------
 void ofApp::circleColModified(ofColor& newval)
 {
@@ -128,12 +129,12 @@ void ofApp::setupGui()
 
     // add input choosing button
     _gui.add(_inputHotHand.setup(_nw.getSceneNode(),"InputHotHand",false));//set("InputHotHand",false));
-   _inputHotHand.addListener(this,&ofApp::changeInput);
+    _inputHotHand.addListener(this,&ofApp::changeInput);
 
     // adding the input from the hot hand
     //_gui.add(_valueHotHand.set("valueHotHand",ofVec3f(0),ofVec3f(0),ofVec3f(1)));
     _gui.add(_valueHotHand.setup(_nw.getSceneNode(),"valueHotHand",ofVec3f(0),ofVec3f(0),ofVec3f(1)));
-   _valueHotHand.addListener(this,&ofApp::inputFromHotHand);
+    _valueHotHand.addListener(this,&ofApp::inputFromHotHand);
 
     // separation Line x
     _gui.add(_sepLineX.setup(_nw.getSceneNode(),"SeparationLine",0.75,0.01,0.99));
@@ -212,7 +213,7 @@ void ofApp::setupGui()
     _soundParameters.setName("soundParameters");
     _soundParameters.add(_freqMod.set("frequence",0.5,0,10));
     _soundParameters.add(_volumeLine.set("volumeLine",1.,0,1));
-    _soundParameters.add(_volumeCircle.set("volumeCircle",1.0,0,1.));
+    _soundParameters.add(_volumeCircle.set("volumeCircle",0.2,0,1.));
 
 
     // add parameters' group to the gui
@@ -307,6 +308,7 @@ void ofApp::update()
     int lineX = 0;
     int offsetY = 0;
     float stepX = (float) _windowWidth / _lineNb ;
+    float sepLineX = (float)_windowWidth*_sepLineX;
 
     lock l(_lineMutex);
     for(SoundLine& l : _vecSoundLines)
@@ -319,6 +321,12 @@ void ofApp::update()
         if(l.isMoving())
         {
             offsetY =(int)_lineAmplitude *sin(sqrt(_lineFrequence)*lineX/_windowWidth*ofGetElapsedTimef());
+
+            if( lineX > sepLineX )// draw square
+            {
+                offsetY *= 3;
+            }
+
         }
 
         l.update(lineX,offsetY);
@@ -381,6 +389,8 @@ void ofApp::draw()
     ofSetLineWidth(_sepLineWidth);
     ofDrawLine(ofPoint(sepLineX,0),ofPoint(sepLineX,_windowHeight));
 
+    ofSetColor(255,100,0,200);
+    ofDrawRectangle(sepLineX,0,0,_windowWidth - sepLineX,_windowHeight);
     ofPopStyle();
 
     /*
@@ -396,8 +406,8 @@ void ofApp::draw()
     lock l(_lineMutex);
     for(SoundLine& l : _vecSoundLines)
     {
-        l.drawSoundLine(lineX,_windowHeight,_lineWidth);
 
+        l.drawSoundLine(lineX,_windowHeight,_lineWidth,sepLineX);
         lineX += stepX;
     }
 
@@ -442,6 +452,7 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels)
 {
     float vl = _volumeLine.get();
     float vc = _volumeCircle.get();
+    float sepLineX = _sepLineX.get();
 
     for(int i = 0 ; i < bufferSize * nChannels; i++) output[i] = 0;
 
@@ -455,7 +466,7 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels)
         lock l(_lineMutex);
         for(SoundLine& l : _vecSoundLines)
         {
-            float soundL =  5 * vl * l.getSound((float)lineX/_windowWidth);
+            float soundL =  5 * vl * l.getSound((float)lineX/_windowWidth,sepLineX);
             output[i * nChannels] += soundL;
             output[i * nChannels +1] += soundL;
 
@@ -515,6 +526,12 @@ void ofApp::inputToCircle(int x, int y, float z)
 //--------------------------------------------------------------
 void ofApp::inputFromHotHand(ofVec3f& newval)
 {
+
+    if(!_inputHotHand)
+    {
+        return;
+    }
+
     // remapping to the screen dimension
     int x = newval.x * _windowWidth;
     int y = newval.y * _windowHeight;
@@ -583,6 +600,8 @@ void ofApp::mousePressed(int x, int y, int button)
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button)
 {
+    _sepLineSelected = false;
+
     //_currHole.radius = ofGetElapsedTimef() - _currHole.radius;
     //_currHole.radius *= 10;
     // ofLog() << "hole radius " << _currCircle.radius;
