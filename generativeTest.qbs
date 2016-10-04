@@ -34,8 +34,8 @@ Project{
         of.pkgConfigs: []       // list of additional system pkgs to include
         of.includePaths: []     // include search paths
         of.cFlags: []           // flags passed to the c compiler
-        of.cxxFlags: [ '-std=c++14' ]         // flags passed to the c++ compiler
-        of.linkerFlags: []      // flags passed to the linker
+        of.cxxFlags: [ '-fsanitize=undefined', '-std=c++14' ]         // flags passed to the c++ compiler
+        of.linkerFlags: [ '-fsanitize=undefined' ]      // flags passed to the linker
         of.defines: []          // defines are passed as -D to the compiler
                                 // and can be checked with #ifdef or #if in the code
 

@@ -4,16 +4,10 @@
 //--------------------------------------------------------------
 ofApp::~ofApp()
 {
-    _reset.removeListener(this,&ofApp::reset);
-    _inputHotHand.removeListener(this,&ofApp::changeInput);
-    _valueHotHand.removeListener(this,&ofApp::inputFromHotHand);
-
-    _lineNb.removeListener(this,&ofApp::lineNbModified);
-    _lineDefaultColor.removeListener(this,&ofApp::lineDefColModified);
+   _lineDefaultColor.removeListener(this,&ofApp::lineDefColModified);
     _lineMovingColor.removeListener(this,&ofApp::lineMovColModified);
     _circleDefaultColor.removeListener(this,&ofApp::circleColModified);
     _currentCircleColor.removeListener(this,&ofApp::currentCircleColModified);
-
 
 }
 //--------------------------------------------------------------
@@ -22,7 +16,7 @@ ofApp::ofApp():
 {}
 
 //--------------------------------------------------------------
-void ofApp::reset()
+void ofApp::reset(bool &newval)
 {
     // _lineNb.set(50);
     _vecSoundCircles.clear();
@@ -129,17 +123,23 @@ void ofApp::setupGui()
     _gui.setPosition(0 , 0);
 
     // add reset button
-    _gui.add(_reset.setup("Reset"));//_reset.setup(_nw.getSceneNode(),"reset",false));
+    _gui.add(_reset.setup(_nw.getSceneNode(),"reset",false));
     _reset.addListener(this,&ofApp::reset);
 
     // add input choosing button
-    _gui.add(_inputHotHand.set("InputHotHand",false));
-    _inputHotHand.addListener(this,&ofApp::changeInput);
+    _gui.add(_inputHotHand.setup(_nw.getSceneNode(),"InputHotHand",false));//set("InputHotHand",false));
+   _inputHotHand.addListener(this,&ofApp::changeInput);
 
     // adding the input from the hot hand
-    _gui.add(_valueHotHand.set("valueHotHand",ofVec3f(0),ofVec3f(0),ofVec3f(1)));
-    //_gui.add(_valueHotHand.setup(_nw.getSceneNode(),"valueHotHand",ofVec3f(0),ofVec3f(-360),ofVec3f(360)));
-    _valueHotHand.addListener(this,&ofApp::inputFromHotHand);
+    //_gui.add(_valueHotHand.set("valueHotHand",ofVec3f(0),ofVec3f(0),ofVec3f(1)));
+    _gui.add(_valueHotHand.setup(_nw.getSceneNode(),"valueHotHand",ofVec3f(0),ofVec3f(0),ofVec3f(1)));
+   _valueHotHand.addListener(this,&ofApp::inputFromHotHand);
+
+    // separation Line x
+    _gui.add(_sepLineX.setup(_nw.getSceneNode(),"SeparationLine",0.75,0.01,0.99));
+    // separation Line x
+    _gui.add(_sepLineWidth.setup(_nw.getSceneNode(),"SeparationWidth",5,0.1,10));
+
 
     /*
      *  Line Parameters Group
@@ -147,17 +147,17 @@ void ofApp::setupGui()
     _lineParameters.setName("lineParameters");
 
     // line number
-    _lineParameters.add(_lineNb.set("lineNumber",40,1,200));
+    _lineParameters.add(_lineNb.setup(_nw.getSceneNode(),"lineNumber",40,1,200));
     _lineNb.addListener(this,&ofApp::lineNbModified);
 
     // line width
-    _lineParameters.add(_lineWidth.set("lineWidth",5,0.1,10));
+    _lineParameters.add(_lineWidth.setup(_nw.getSceneNode(),"lineWidth",5,0.1,10));
 
     // line amplitude
-    _lineParameters.add(_lineAmplitude.set("lineAmplitude",200,1,500));
+    _lineParameters.add(_lineAmplitude.setup(_nw.getSceneNode(),"lineAmplitude",200,1,500));
 
     // line frequence
-    _lineParameters.add(_lineFrequence.set("lineFrequence",10,1,20));
+    _lineParameters.add(_lineFrequence.setup(_nw.getSceneNode(),"lineFrequence",10,1,20));
 
     // line colors
     _lineParameters.add(_lineDefaultColor.set
@@ -239,6 +239,8 @@ void ofApp::setup()
     _windowWidth = ofGetWindowWidth();
     _windowHeight = ofGetWindowHeight();
 
+    //separation line default value
+    _sepLineSelected = false;
 
     // allocate fbo
     if(!_fbo.isAllocated())
@@ -371,6 +373,16 @@ void ofApp::drawInFbo()
 //--------------------------------------------------------------
 void ofApp::draw()
 {
+
+    // Draw separation line
+    ofPushStyle();
+    float sepLineX = _windowWidth*_sepLineX;
+    ofSetColor(255,255,0);
+    ofSetLineWidth(_sepLineWidth);
+    ofDrawLine(ofPoint(sepLineX,0),ofPoint(sepLineX,_windowHeight));
+
+    ofPopStyle();
+
     /*
      * Draw lines
      * */
@@ -456,8 +468,8 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels)
         for(SoundCircle& c : _vecSoundCircles)
         {
             float soundC = 30 * vc * c.getSound();
-                output[i * nChannels] += soundC ;
-                output[i * nChannels +1] += soundC ;
+            output[i * nChannels] += soundC ;
+            output[i * nChannels +1] += soundC ;
 
         }
 
@@ -512,7 +524,7 @@ void ofApp::inputFromHotHand(ofVec3f& newval)
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-ofLog ()<< _volumeCircle;
+    ofLog ()<< _volumeCircle;
 }
 
 //--------------------------------------------------------------
@@ -523,7 +535,7 @@ void ofApp::keyReleased(int key){
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y)
 {
-    if(_inputHotHand)
+    if(_inputHotHand || _sepLineSelected)
     {
         return;
     }
@@ -535,18 +547,37 @@ void ofApp::mouseMoved(int x, int y)
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
+void ofApp::mouseDragged(int x, int y, int button)
+{
+    if(_sepLineSelected && x > _lineWidth && x < _windowWidth)
+    {
+        _sepLineX.set((float)x/_windowWidth);
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button)
 {
-    ofLog() << _vecSoundCircles.size();
-    /*_currCircle.pos = ofPoint(x,y);
-    _currCircle.radius = 0.01;//ofGetElapsedTimef();
+    if(_currCircle.isReady())
+    {
+        // add the current circle to the circle vector
+        _currCircle.setColor(_circleDefaultColor.get());
+        _currCircle.setDashColor(_circleDefaultColor.get());
+        lock lc(_circleMutex);
+        _vecSoundCircles.push_back(_currCircle);
+        _currCircle.reset(50);
+    }
 
-*/
+    float xx = _sepLineX*_windowWidth - x;
+    // pressed on the separation line
+    if(abs(xx) < _sepLineWidth)
+    {
+        _sepLineSelected = true;
+    }
+    else
+    {
+        _sepLineSelected = false;
+    }
 }
 
 //--------------------------------------------------------------

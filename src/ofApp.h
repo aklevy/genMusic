@@ -6,7 +6,8 @@
 
 #include "ofxGui.h"
 //#include "ofxMaxim.h"
-#include "parameter.hpp"
+#include "ofxOssia.hpp"
+
 //#include "network.hpp"
 
 struct line
@@ -24,7 +25,7 @@ public:
     ofApp();
 
     // listeners
-    void reset();
+    void reset(bool& newval);
     void changeInput(bool& newval);
 
     void inputFromHotHand(ofVec3f &newval);
@@ -68,23 +69,32 @@ public:
 
 private:
 
+    // Window dimension
     float       _windowWidth;
     float       _windowHeight;
+
+
 
     // Network for communication with i-score
     Network             _nw;
 
-    //gui
+    // Gui
     ofxPanel    _gui;
-    ofxButton    _reset;
-    ofParameter<bool>       _inputHotHand;
-    ofParameter<ofVec3f>    _valueHotHand;
+
+    ossia::Parameter<bool>    _reset;
+    ossia::Parameter<bool>       _inputHotHand;
+    ossia::Parameter<ofVec3f>    _valueHotHand;
+
+    // Separation line
+    ossia::Parameter<float>      _sepLineX;
+    ossia::Parameter<float>      _sepLineWidth;
+    bool                    _sepLineSelected;
     // line parameters
     ofParameterGroup        _lineParameters;
-    ofParameter<int>        _lineNb;
-    ofParameter<float>      _lineWidth;
-    ofParameter<float>      _lineAmplitude;
-    ofParameter<float>      _lineFrequence;
+    ossia::Parameter<int>        _lineNb;
+    ossia::Parameter<float>      _lineWidth;
+    ossia::Parameter<float>      _lineAmplitude;
+    ossia::Parameter<float>      _lineFrequence;
     ofParameter<ofColor>    _lineDefaultColor;
     ofParameter<ofColor>    _lineMovingColor;
 
