@@ -28,7 +28,6 @@ public:
     void reset(bool& newval);
     void changeInput(bool& newval);
 
-    void inputFromHotHand(ofVec3f &newval);
 
     void lineNbModified(int& newval);
     void lineDefColModified(ofColor& newval);
@@ -53,6 +52,10 @@ public:
 
     // Audio output and input methods
     void audioOut(float * output, int bufferSize, int nChannels);
+
+    void inputFromHotHand(ofVec3f& newval);
+    void inputFromHotHandX(float& newval);
+    void inputFromHotHandY(float& newval);
 
     void inputToCircle(int x, int y, float z = 0.);
 
@@ -84,6 +87,8 @@ private:
     ossia::Parameter<bool>    _reset;
     ossia::Parameter<bool>       _inputHotHand;
     ossia::Parameter<ofVec3f>    _valueHotHand;
+    ossia::Parameter<float>    _valueHotHandX;
+    ossia::Parameter<float>    _valueHotHandY;
 
     // Separation line
     ossia::Parameter<float>      _sepLineX;

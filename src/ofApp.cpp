@@ -134,12 +134,17 @@ void ofApp::setupGui()
     // adding the input from the hot hand
     //_gui.add(_valueHotHand.set("valueHotHand",ofVec3f(0),ofVec3f(0),ofVec3f(1)));
     _gui.add(_valueHotHand.setup(_nw.getSceneNode(),"valueHotHand",ofVec3f(0),ofVec3f(0),ofVec3f(1)));
-    _valueHotHand.addListener(this,&ofApp::inputFromHotHand);
+    //_valueHotHand.addListener(this,&ofApp::inputFromHotHand);
+
+    _gui.add(_valueHotHandX.setup(_nw.getSceneNode(),"valueHotHandX",0.,0,1));
+    _valueHotHandX.addListener(this,&ofApp::inputFromHotHandX);
+    _gui.add(_valueHotHandY.setup(_nw.getSceneNode(),"valueHotHandY",0.,0,1));
+    _valueHotHandY.addListener(this,&ofApp::inputFromHotHandY);
 
     // separation Line x
     _gui.add(_sepLineX.setup(_nw.getSceneNode(),"SeparationLine",0.75,0.01,0.99));
     // separation Line x
-    _gui.add(_sepLineWidth.setup(_nw.getSceneNode(),"SeparationWidth",5,0.1,10));
+    _gui.add(_sepLineWidth.setup(_nw.getSceneNode(),"SeparationWidth",20,0.1,50));
 
 
     /*
@@ -170,7 +175,7 @@ void ofApp::setupGui()
 
     _lineParameters.add(_lineMovingColor.set
                         ("lineMovingColor",
-                         ofColor(0,50,0,255),
+                         ofColor(0,213,135,255),
                          ofColor(0,0,0,0),
                          ofColor(255,255,255,255)));
     _lineMovingColor.addListener(this,&ofApp::lineMovColModified);
@@ -537,6 +542,49 @@ void ofApp::inputFromHotHand(ofVec3f& newval)
     int y = newval.y * _windowHeight;
 
     inputToCircle(x, y, newval.z );
+}
+//--------------------------------------------------------------
+void ofApp::inputFromHotHandX(float& newval)
+{
+
+    if(!_inputHotHand)
+    {
+        return;
+    }
+
+    // remapping to the screen dimension
+    int x = newval * _windowWidth;
+
+  // ofVec3f oldVal = _valueHotHand.get();
+  // int y = oldVal.y * _windowHeight;
+
+ //  oldVal.x = x;
+  //  _valueHotHand.set(oldVal);
+    inputToCircle(x, x, 0);//oldVal.z );
+
+}
+//--------------------------------------------------------------
+void ofApp::inputFromHotHandY(float& newval)
+{
+
+    if(!_inputHotHand)
+    {
+        return;
+    }
+
+    // remapping to the screen dimension
+
+    int y = newval * _windowHeight;
+   // _inputHotHand.y = y;
+
+    ofVec3f oldVal = _valueHotHand.get();
+   // oldVal.y = y;
+    // _valueHotHand.set(oldVal);
+    int x = oldVal.y * _windowWidth;
+
+  //  oldVal.x = x;
+   //  _valueHotHand.set(oldVal);
+     inputToCircle(x, y, oldVal.z );
 }
 
 //--------------------------------------------------------------
