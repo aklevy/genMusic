@@ -165,6 +165,9 @@ void ofApp::setupGui()
     // line frequence
     _lineParameters.add(_lineFrequence.setup(_nw.getSceneNode(),"lineFrequence",10,1,20));
 
+    // line (square) noise factor
+    _lineParameters.add(_lineNoise.setup(_nw.getSceneNode(),"lineNoise",0.,0.,1.));
+
     // line colors
     _lineParameters.add(_lineDefaultColor.set
                         ("lineDefaultColor",
@@ -458,6 +461,8 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels)
     float vl = _volumeLine.get();
     float vc = _volumeCircle.get();
     float sepLineX = _sepLineX.get();
+    float noiseFactor = _lineNoise.get();
+   // float sepLineNoise = _oscSoundSepLine.noise();
 
     for(int i = 0 ; i < bufferSize * nChannels; i++) output[i] = 0;
 
@@ -471,7 +476,7 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels)
         lock l(_lineMutex);
         for(SoundLine& l : _vecSoundLines)
         {
-            float soundL =  5 * vl * l.getSound((float)lineX/_windowWidth,sepLineX);
+            float soundL =  5 * vl * l.getSound((float)lineX/_windowWidth,sepLineX,noiseFactor);
             output[i * nChannels] += soundL;
             output[i * nChannels +1] += soundL;
 
@@ -495,10 +500,16 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels)
         output[i * nChannels] += soundCurr;
         output[i * nChannels +1] += soundCurr;
 
+        // add sep line sound if selected
+       /* if(_sepLineSelected)
+        {
+            output[i * nChannels] += 10*sepLineNoise;
+            output[i * nChannels +1] += 10*sepLineNoise;
+        }*/
     }
 
 
-    int n = _vecSoundLines.size() +1;//+ _vecSoundCircles.size() + 1;//+5; //get playing circle number
+    int n = _vecSoundLines.size() + _vecSoundCircles.size() + 1 + 1;
     if(n > 1)
         for(int i = 0 ; i < bufferSize * nChannels; i++) output[i] /= n;
 }

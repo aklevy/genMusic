@@ -16,7 +16,7 @@ public:
     void drawSoundLine(float x, float winHeight, float lineWidth, float sepLineX);
 
     // sound method
-    float getSound(float x, float sepLineX);
+    float getSound(float x, float sepLineX, float noiseFactor = 0);
 
     void setDefaultColor(ofColor col){_lineDefaultColor = col;}
     void setMovingColor(ofColor col){_lineMovingColor = col;}

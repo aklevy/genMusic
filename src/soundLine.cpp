@@ -76,7 +76,7 @@ void SoundLine::drawSoundLine(float x, float winHeight, float lineWidth, float s
 
 //--------------------------------------------------------------
 
-float SoundLine::getSound(float xMod, float sepLineX)
+float SoundLine::getSound(float xMod, float sepLineX, float noiseFactor)
 {
     if(_bPlay)
     {
@@ -88,7 +88,8 @@ float SoundLine::getSound(float xMod, float sepLineX)
         }
         else
         {
-            sound = _oscSound.pulse(freq*xMod,0.6);
+            sound = noiseFactor * _oscSound.noise();
+            sound += (1.-noiseFactor) *_oscSound.pulse(freq*xMod,0.6);
         }
 
         // sound += 0.1*_oscSound.sinewave(261*ofGetMouseY());

@@ -106,6 +106,7 @@ private:
     ossia::Parameter<float>     _lineWidth;
     ossia::Parameter<float>     _lineAmplitude;
     ossia::Parameter<float>     _lineFrequence;
+    ossia::Parameter<float>     _lineNoise;
     ofParameter<ofColor>        _lineDefaultColor;
     ofParameter<ofColor>        _lineMovingColor;
 
@@ -135,6 +136,7 @@ private:
     // ofxMaxim param
     int		bufferSize; /* buffer size */
     int		sampleRate;
+    maxiOsc     _oscSoundSepLine;
 
     // sound param
     ofParameterGroup        _soundParameters;
