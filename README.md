@@ -7,7 +7,8 @@ It is an openFrameworks application, using the following addons:
 * ofxMaxim (for sound synthesis)
 * ofxOSSIA (for controlling parameters using i-score)
 
-** Tested OS **
+**Tested OS**
+
 Tested only on linux (debian/stretch and antergos)
 
 Be careful of your PC's volume while testing genMusic ...
