@@ -122,9 +122,10 @@ private:
     ofParameterGroup        _circleParameters;
     ofParameter<ofColor>    _circleDefaultColor;
     ofParameter<ofColor>    _currentCircleColor;
-    ofParameter<bool>       _drawAllCircles;
     // ofParameter<bool>       _circleFill;
     ofParameter<float>      _circleGrowingSpeed;
+    ossia::Parameter<float>      _circleFrequence;
+    ofParameter<bool>       _drawAllCircles;
 
 
     // circles

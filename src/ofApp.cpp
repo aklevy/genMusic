@@ -142,9 +142,9 @@ void ofApp::setupGui()
     _valueHotHandY.addListener(this,&ofApp::inputFromHotHandY);
 
     // separation Line x
-    _gui.add(_sepLineX.setup(_nw.getSceneNode(),"SeparationLine",0.75,0.01,0.99));
+    _gui.add(_sepLineX.setup(_nw.getSceneNode(),"separationLine",0.75,0.01,0.99));
     // separation Line x
-    _gui.add(_sepLineWidth.setup(_nw.getSceneNode(),"SeparationWidth",20,0.1,50));
+    _gui.add(_sepLineWidth.setup(_nw.getSceneNode(),"separationWidth",20,0.1,50));
 
 
     /*
@@ -166,7 +166,7 @@ void ofApp::setupGui()
     _lineParameters.add(_lineFrequence.setup(_nw.getSceneNode(),"lineFrequence",10,1,20));
 
     // line (square) noise factor
-    _lineParameters.add(_lineNoise.setup(_nw.getSceneNode(),"lineNoise",0.,0.,1.));
+    _lineParameters.add(_lineNoise.setup(_nw.getSceneNode(),"lineNoise",0.5,0.,1.));
 
     // line colors
     _lineParameters.add(_lineDefaultColor.set
@@ -211,6 +211,11 @@ void ofApp::setupGui()
     // circle growing speed
     _circleParameters.add(_circleGrowingSpeed.set("circleGrowth",1,0,5));//_reset.setup(_nw.getSceneNode(),"reset",false));
 
+
+    // circle frequence
+    _circleParameters.add(_circleFrequence.setup(_nw.getSceneNode(),"circleFrequence",100.,50.,600.));//_reset.setup(_nw.getSceneNode(),"reset",false));
+
+
     // draw all the circles (even if they do not emit any sound)
     _circleParameters.add(_drawAllCircles.set("history",false));//_reset.setup(_nw.getSceneNode(),"reset",false));
 
@@ -218,8 +223,8 @@ void ofApp::setupGui()
     /*
      *  Sound Parameters Group
      */
-    _soundParameters.setName("soundParameters");
-    _soundParameters.add(_freqMod.set("frequence",0.5,0,10));
+    _soundParameters.setName("generalSoundParameters");
+   // _soundParameters.add(_freqMod.set("frequence",0.5,0,10));
     _soundParameters.add(_volumeLine.set("volumeLine",1.,0,1));
     _soundParameters.add(_volumeCircle.set("volumeCircle",0.2,0,1.));
 
@@ -462,6 +467,8 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels)
     float vc = _volumeCircle.get();
     float sepLineX = _sepLineX.get();
     float noiseFactor = _lineNoise.get();
+    float cFreq = _circleFrequence.get();
+
    // float sepLineNoise = _oscSoundSepLine.noise();
 
     for(int i = 0 ; i < bufferSize * nChannels; i++) output[i] = 0;
@@ -488,14 +495,14 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels)
         lock lc(_circleMutex);
         for(SoundCircle& c : _vecSoundCircles)
         {
-            float soundC = 30 * vc * c.getSound();
+            float soundC = 30 * vc * c.getSound(cFreq);
             output[i * nChannels] += soundC ;
             output[i * nChannels +1] += soundC ;
 
         }
 
         // get current circle's sound
-        float soundCurr =  30 * vc * _currCircle.getSound();
+        float soundCurr =  30 * vc * _currCircle.getSound(cFreq);
 
         output[i * nChannels] += soundCurr;
         output[i * nChannels +1] += soundCurr;

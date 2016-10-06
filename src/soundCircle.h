@@ -20,7 +20,7 @@ public:
 
     // sound method
     int getSoundDuration(){return _soundDuration;}
-    float getSound();
+    float getSound(float freq);
 
     bool isTouchingLine(float x);
     bool isSameCircle(float x, float y, float err);

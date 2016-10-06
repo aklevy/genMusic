@@ -1,0 +1,1365 @@
+{
+    "Document": {
+        "BaseScenario": {
+            "Constraint": {
+                "DefaultDuration": 15000,
+                "EndState": 1,
+                "FullView": {
+                    "CenterOn": [
+                        0,
+                        0,
+                        660,
+                        528
+                    ],
+                    "ConstraintId": 0,
+                    "ObjectName": "FullViewConstraintViewModel",
+                    "ShownRack": 1,
+                    "Zoom": 25,
+                    "id": 0
+                },
+                "HeightPercentage": 0,
+                "Looping": false,
+                "MaxDuration": 15000,
+                "MaxInf": true,
+                "Metadata": {
+                    "Color": "Transparent1",
+                    "Comment": "",
+                    "Label": "",
+                    "ScriptingName": "Untitled.rant81burp80"
+                },
+                "MinDuration": 15000,
+                "MinNull": false,
+                "ObjectName": "Scenario::ConstraintModel",
+                "Processes": [
+                    {
+                        "Comments": [
+                        ],
+                        "Constraints": [
+                            {
+                                "DefaultDuration": 6187.6920699783095,
+                                "EndState": 2,
+                                "FullView": {
+                                    "CenterOn": [
+                                        0,
+                                        0,
+                                        0,
+                                        0
+                                    ],
+                                    "ConstraintId": 1,
+                                    "ObjectName": "FullViewConstraintViewModel",
+                                    "ShownRack": 1,
+                                    "Zoom": -1,
+                                    "id": 2
+                                },
+                                "HeightPercentage": 0.064796259185036731,
+                                "Looping": false,
+                                "MaxDuration": 6187.6920699783095,
+                                "MaxInf": true,
+                                "Metadata": {
+                                    "Color": "Transparent1",
+                                    "Comment": "",
+                                    "Label": "",
+                                    "ScriptingName": "gale21roof61"
+                                },
+                                "MinDuration": 6187.6920699783095,
+                                "MinNull": true,
+                                "ObjectName": "Scenario::ConstraintModel",
+                                "Processes": [
+                                    {
+                                        "Curve": {
+                                            "ObjectName": "CurveModel",
+                                            "Segments": [
+                                                {
+                                                    "End": [
+                                                        1,
+                                                        1
+                                                    ],
+                                                    "Following": null,
+                                                    "ObjectName": "CurveSegmentModel",
+                                                    "Power": 11.050000000000001,
+                                                    "Previous": null,
+                                                    "Start": [
+                                                        0,
+                                                        0
+                                                    ],
+                                                    "id": 1,
+                                                    "uuid": "1e7cb83f-4e47-4b14-814d-2242a9c75991"
+                                                }
+                                            ],
+                                            "id": 45345
+                                        },
+                                        "Duration": 6187,
+                                        "Metadata": {
+                                            "Color": "",
+                                            "Comment": "",
+                                            "Label": "",
+                                            "ScriptingName": "Mapping.1"
+                                        },
+                                        "ObjectName": "Mapping",
+                                        "SourceAddress": {
+                                            "Device": "MidiDevice",
+                                            "Path": "1/control/9"
+                                        },
+                                        "SourceMax": 127,
+                                        "SourceMin": 0,
+                                        "TargetAddress": {
+                                            "Device": "kaleidoSound",
+                                            "Path": "scene/separationLine"
+                                        },
+                                        "TargetMax": 0.99000000953674316,
+                                        "TargetMin": 0.0099999997764825821,
+                                        "id": 1,
+                                        "uuid": "12a5d9b8-823e-4303-99f8-34db37c448b4"
+                                    },
+                                    {
+                                        "Curve": {
+                                            "ObjectName": "CurveModel",
+                                            "Segments": [
+                                                {
+                                                    "End": [
+                                                        1,
+                                                        1
+                                                    ],
+                                                    "Following": null,
+                                                    "ObjectName": "CurveSegmentModel",
+                                                    "Power": 11.050000000000001,
+                                                    "Previous": null,
+                                                    "Start": [
+                                                        0,
+                                                        0
+                                                    ],
+                                                    "id": 1,
+                                                    "uuid": "1e7cb83f-4e47-4b14-814d-2242a9c75991"
+                                                }
+                                            ],
+                                            "id": 45345
+                                        },
+                                        "Duration": 6187.6920699783095,
+                                        "Metadata": {
+                                            "Color": "",
+                                            "Comment": "",
+                                            "Label": "",
+                                            "ScriptingName": "Mapping.2"
+                                        },
+                                        "ObjectName": "Mapping",
+                                        "SourceAddress": {
+                                            "Device": "MidiDevice",
+                                            "Path": "1/control/8"
+                                        },
+                                        "SourceMax": 127,
+                                        "SourceMin": 0,
+                                        "TargetAddress": {
+                                            "Device": "kaleidoSound",
+                                            "Path": "scene/circleFrequence"
+                                        },
+                                        "TargetMax": 600,
+                                        "TargetMin": 50,
+                                        "id": 2,
+                                        "uuid": "12a5d9b8-823e-4303-99f8-34db37c448b4"
+                                    },
+                                    {
+                                        "Curve": {
+                                            "ObjectName": "CurveModel",
+                                            "Segments": [
+                                                {
+                                                    "End": [
+                                                        1,
+                                                        1
+                                                    ],
+                                                    "Following": null,
+                                                    "ObjectName": "CurveSegmentModel",
+                                                    "Power": 11.050000000000001,
+                                                    "Previous": null,
+                                                    "Start": [
+                                                        0,
+                                                        0
+                                                    ],
+                                                    "id": 1,
+                                                    "uuid": "1e7cb83f-4e47-4b14-814d-2242a9c75991"
+                                                }
+                                            ],
+                                            "id": 45345
+                                        },
+                                        "Duration": 6187.6920699783095,
+                                        "Metadata": {
+                                            "Color": "",
+                                            "Comment": "",
+                                            "Label": "",
+                                            "ScriptingName": "Mapping.3"
+                                        },
+                                        "ObjectName": "Mapping",
+                                        "SourceAddress": {
+                                            "Device": "MidiDevice",
+                                            "Path": "1/control/7"
+                                        },
+                                        "SourceMax": 127,
+                                        "SourceMin": 0,
+                                        "TargetAddress": {
+                                            "Device": "kaleidoSound",
+                                            "Path": "scene/lineNoise"
+                                        },
+                                        "TargetMax": 1,
+                                        "TargetMin": 0,
+                                        "id": 3,
+                                        "uuid": "12a5d9b8-823e-4303-99f8-34db37c448b4"
+                                    }
+                                ],
+                                "Rackes": [
+                                    {
+                                        "Metadata": {
+                                            "Color": "",
+                                            "Comment": "",
+                                            "Label": "",
+                                            "ScriptingName": "Rack.1"
+                                        },
+                                        "ObjectName": "Scenario::RackModel",
+                                        "Slots": [
+                                            {
+                                                "EditedProcess": 1,
+                                                "Height": 50,
+                                                "LayerModels": [
+                                                    {
+                                                        "ObjectName": "MappingLayer",
+                                                        "SharedProcess": {
+                                                            "Identifiers": [
+                                                                {
+                                                                    "ObjectId": 41436351,
+                                                                    "ObjectName": "DocumentModel"
+                                                                },
+                                                                {
+                                                                    "ObjectId": 1,
+                                                                    "ObjectName": "Scenario::ScenarioDocumentModel"
+                                                                },
+                                                                {
+                                                                    "ObjectId": 0,
+                                                                    "ObjectName": "Scenario::BaseScenario"
+                                                                },
+                                                                {
+                                                                    "ObjectId": 0,
+                                                                    "ObjectName": "Scenario::ConstraintModel"
+                                                                },
+                                                                {
+                                                                    "ObjectId": 1,
+                                                                    "ObjectName": "Scenario"
+                                                                },
+                                                                {
+                                                                    "ObjectId": 1,
+                                                                    "ObjectName": "Scenario::ConstraintModel"
+                                                                },
+                                                                {
+                                                                    "ObjectId": 1,
+                                                                    "ObjectName": "Mapping"
+                                                                }
+                                                            ]
+                                                        },
+                                                        "id": 1,
+                                                        "uuid": "a4834de8-f89d-46a5-b744-48761d91e6e6"
+                                                    }
+                                                ],
+                                                "Metadata": {
+                                                    "Color": "",
+                                                    "Comment": "",
+                                                    "Label": "",
+                                                    "ScriptingName": "Slot.1"
+                                                },
+                                                "ObjectName": "Scenario::SlotModel",
+                                                "id": 1
+                                            },
+                                            {
+                                                "EditedProcess": 1,
+                                                "Height": 62,
+                                                "LayerModels": [
+                                                    {
+                                                        "ObjectName": "MappingLayer",
+                                                        "SharedProcess": {
+                                                            "Identifiers": [
+                                                                {
+                                                                    "ObjectId": 41436351,
+                                                                    "ObjectName": "DocumentModel"
+                                                                },
+                                                                {
+                                                                    "ObjectId": 1,
+                                                                    "ObjectName": "Scenario::ScenarioDocumentModel"
+                                                                },
+                                                                {
+                                                                    "ObjectId": 0,
+                                                                    "ObjectName": "Scenario::BaseScenario"
+                                                                },
+                                                                {
+                                                                    "ObjectId": 0,
+                                                                    "ObjectName": "Scenario::ConstraintModel"
+                                                                },
+                                                                {
+                                                                    "ObjectId": 1,
+                                                                    "ObjectName": "Scenario"
+                                                                },
+                                                                {
+                                                                    "ObjectId": 1,
+                                                                    "ObjectName": "Scenario::ConstraintModel"
+                                                                },
+                                                                {
+                                                                    "ObjectId": 2,
+                                                                    "ObjectName": "Mapping"
+                                                                }
+                                                            ]
+                                                        },
+                                                        "id": 1,
+                                                        "uuid": "a4834de8-f89d-46a5-b744-48761d91e6e6"
+                                                    }
+                                                ],
+                                                "Metadata": {
+                                                    "Color": "",
+                                                    "Comment": "",
+                                                    "Label": "",
+                                                    "ScriptingName": "Slot.2"
+                                                },
+                                                "ObjectName": "Scenario::SlotModel",
+                                                "id": 2
+                                            },
+                                            {
+                                                "EditedProcess": 1,
+                                                "Height": 57,
+                                                "LayerModels": [
+                                                    {
+                                                        "ObjectName": "MappingLayer",
+                                                        "SharedProcess": {
+                                                            "Identifiers": [
+                                                                {
+                                                                    "ObjectId": 41436351,
+                                                                    "ObjectName": "DocumentModel"
+                                                                },
+                                                                {
+                                                                    "ObjectId": 1,
+                                                                    "ObjectName": "Scenario::ScenarioDocumentModel"
+                                                                },
+                                                                {
+                                                                    "ObjectId": 0,
+                                                                    "ObjectName": "Scenario::BaseScenario"
+                                                                },
+                                                                {
+                                                                    "ObjectId": 0,
+                                                                    "ObjectName": "Scenario::ConstraintModel"
+                                                                },
+                                                                {
+                                                                    "ObjectId": 1,
+                                                                    "ObjectName": "Scenario"
+                                                                },
+                                                                {
+                                                                    "ObjectId": 1,
+                                                                    "ObjectName": "Scenario::ConstraintModel"
+                                                                },
+                                                                {
+                                                                    "ObjectId": 3,
+                                                                    "ObjectName": "Mapping"
+                                                                }
+                                                            ]
+                                                        },
+                                                        "id": 1,
+                                                        "uuid": "a4834de8-f89d-46a5-b744-48761d91e6e6"
+                                                    }
+                                                ],
+                                                "Metadata": {
+                                                    "Color": "",
+                                                    "Comment": "",
+                                                    "Label": "",
+                                                    "ScriptingName": "Slot.3"
+                                                },
+                                                "ObjectName": "Scenario::SlotModel",
+                                                "id": 3
+                                            }
+                                        ],
+                                        "SlotsPositions": [
+                                            1,
+                                            2,
+                                            3
+                                        ],
+                                        "id": 1
+                                    }
+                                ],
+                                "Rigidity": false,
+                                "StartDate": 0,
+                                "StartState": 1,
+                                "id": 1
+                            }
+                        ],
+                        "Duration": 15000,
+                        "EndEventId": 1,
+                        "EndTimeNodeId": 1,
+                        "Events": [
+                            {
+                                "Condition": {
+                                    "Children": [
+                                    ],
+                                    "RootNode": {
+                                    }
+                                },
+                                "Date": 0,
+                                "Extent": [
+                                    0.02,
+                                    0.064796259185036731
+                                ],
+                                "Metadata": {
+                                    "Color": "Emphasis4",
+                                    "Comment": "",
+                                    "Label": "",
+                                    "ScriptingName": "Event.0"
+                                },
+                                "ObjectName": "Scenario::EventModel",
+                                "Offset": 0,
+                                "States": [
+                                    0,
+                                    1
+                                ],
+                                "TimeNode": 0,
+                                "id": 0
+                            },
+                            {
+                                "Condition": {
+                                    "Children": [
+                                    ],
+                                    "RootNode": {
+                                    }
+                                },
+                                "Date": 15000,
+                                "Extent": [
+                                    1.7976931348623157e+308,
+                                    -1.7976931348623157e+308
+                                ],
+                                "Metadata": {
+                                    "Color": "Emphasis4",
+                                    "Comment": "",
+                                    "Label": "",
+                                    "ScriptingName": "Event.1"
+                                },
+                                "ObjectName": "Scenario::EventModel",
+                                "Offset": 0,
+                                "States": [
+                                ],
+                                "TimeNode": 1,
+                                "id": 1
+                            },
+                            {
+                                "Condition": {
+                                    "Children": [
+                                    ],
+                                    "RootNode": {
+                                    }
+                                },
+                                "Date": 6187.6920699783095,
+                                "Extent": [
+                                    0.064796259185036731,
+                                    0.064796259185036731
+                                ],
+                                "Metadata": {
+                                    "Color": "Emphasis4",
+                                    "Comment": "",
+                                    "Label": "",
+                                    "ScriptingName": "pill96silk53"
+                                },
+                                "ObjectName": "Scenario::EventModel",
+                                "Offset": 0,
+                                "States": [
+                                    2
+                                ],
+                                "TimeNode": 2,
+                                "id": 2
+                            }
+                        ],
+                        "Metadata": {
+                            "Color": "",
+                            "Comment": "",
+                            "Label": "",
+                            "ScriptingName": "Scenario.1"
+                        },
+                        "ObjectName": "Scenario",
+                        "StartEventId": 0,
+                        "StartStateId": 0,
+                        "StartTimeNodeId": 0,
+                        "States": [
+                            {
+                                "Event": 0,
+                                "HeightPercentage": 0.02,
+                                "Messages": {
+                                    "Children": [
+                                    ],
+                                    "Following": [
+                                    ],
+                                    "Name": "",
+                                    "Previous": [
+                                    ],
+                                    "Priorities": [
+                                        1,
+                                        2,
+                                        0
+                                    ]
+                                },
+                                "Metadata": {
+                                    "Color": "",
+                                    "Comment": "",
+                                    "Label": "",
+                                    "ScriptingName": "State.0"
+                                },
+                                "NextConstraint": null,
+                                "ObjectName": "Scenario::StateModel",
+                                "PreviousConstraint": null,
+                                "StateProcesses": [
+                                ],
+                                "id": 0
+                            },
+                            {
+                                "Event": 0,
+                                "HeightPercentage": 0.064796259185036731,
+                                "Messages": {
+                                    "Children": [
+                                    ],
+                                    "Following": [
+                                    ],
+                                    "Name": "",
+                                    "Previous": [
+                                    ],
+                                    "Priorities": [
+                                        1,
+                                        2,
+                                        0
+                                    ]
+                                },
+                                "Metadata": {
+                                    "Color": "",
+                                    "Comment": "",
+                                    "Label": "",
+                                    "ScriptingName": "State.1"
+                                },
+                                "NextConstraint": 1,
+                                "ObjectName": "Scenario::StateModel",
+                                "PreviousConstraint": null,
+                                "StateProcesses": [
+                                ],
+                                "id": 1
+                            },
+                            {
+                                "Event": 2,
+                                "HeightPercentage": 0.064796259185036731,
+                                "Messages": {
+                                    "Children": [
+                                    ],
+                                    "Following": [
+                                    ],
+                                    "Name": "",
+                                    "Previous": [
+                                    ],
+                                    "Priorities": [
+                                        1,
+                                        2,
+                                        0
+                                    ]
+                                },
+                                "Metadata": {
+                                    "Color": "",
+                                    "Comment": "",
+                                    "Label": "",
+                                    "ScriptingName": "State.2"
+                                },
+                                "NextConstraint": null,
+                                "ObjectName": "Scenario::StateModel",
+                                "PreviousConstraint": 1,
+                                "StateProcesses": [
+                                ],
+                                "id": 2
+                            }
+                        ],
+                        "TimeNodes": [
+                            {
+                                "Date": 0,
+                                "Events": [
+                                    0
+                                ],
+                                "Extent": [
+                                    0.02,
+                                    0.064796259185036731
+                                ],
+                                "Metadata": {
+                                    "Color": "HalfDark",
+                                    "Comment": "",
+                                    "Label": "",
+                                    "ScriptingName": "TimeNode.0"
+                                },
+                                "ObjectName": "Scenario::TimeNodeModel",
+                                "Trigger": {
+                                    "Active": false,
+                                    "Expression": {
+                                        "Children": [
+                                            {
+                                                "Children": [
+                                                ],
+                                                "Relation": {
+                                                    "LHS": {
+                                                        "Value": {
+                                                            "Type": "Bool",
+                                                            "Value": true
+                                                        }
+                                                    },
+                                                    "Op": 0,
+                                                    "RHS": {
+                                                        "Value": {
+                                                            "Type": "Bool",
+                                                            "Value": false
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "RootNode": {
+                                        }
+                                    }
+                                },
+                                "id": 0
+                            },
+                            {
+                                "Date": 15000,
+                                "Events": [
+                                    1
+                                ],
+                                "Extent": [
+                                    1.7976931348623157e+308,
+                                    -1.7976931348623157e+308
+                                ],
+                                "Metadata": {
+                                    "Color": "HalfDark",
+                                    "Comment": "",
+                                    "Label": "",
+                                    "ScriptingName": "TimeNode.1"
+                                },
+                                "ObjectName": "Scenario::TimeNodeModel",
+                                "Trigger": {
+                                    "Active": false,
+                                    "Expression": {
+                                        "Children": [
+                                            {
+                                                "Children": [
+                                                ],
+                                                "Relation": {
+                                                    "LHS": {
+                                                        "Value": {
+                                                            "Type": "Bool",
+                                                            "Value": true
+                                                        }
+                                                    },
+                                                    "Op": 0,
+                                                    "RHS": {
+                                                        "Value": {
+                                                            "Type": "Bool",
+                                                            "Value": false
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "RootNode": {
+                                        }
+                                    }
+                                },
+                                "id": 1
+                            },
+                            {
+                                "Date": 6187.6920699783095,
+                                "Events": [
+                                    2
+                                ],
+                                "Extent": [
+                                    0.064796259185036731,
+                                    0.064796259185036731
+                                ],
+                                "Metadata": {
+                                    "Color": "HalfDark",
+                                    "Comment": "",
+                                    "Label": "",
+                                    "ScriptingName": "thaw85hare80"
+                                },
+                                "ObjectName": "Scenario::TimeNodeModel",
+                                "Trigger": {
+                                    "Active": true,
+                                    "Expression": {
+                                        "Children": [
+                                            {
+                                                "Children": [
+                                                ],
+                                                "Relation": {
+                                                    "LHS": {
+                                                        "Value": {
+                                                            "Type": "Bool",
+                                                            "Value": true
+                                                        }
+                                                    },
+                                                    "Op": 0,
+                                                    "RHS": {
+                                                        "Value": {
+                                                            "Type": "Bool",
+                                                            "Value": false
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "RootNode": {
+                                        }
+                                    }
+                                },
+                                "id": 2
+                            }
+                        ],
+                        "id": 1,
+                        "uuid": "de035912-5b03-49a8-bc4d-b2cba68e21d9"
+                    }
+                ],
+                "Rackes": [
+                    {
+                        "Metadata": {
+                            "Color": "",
+                            "Comment": "",
+                            "Label": "",
+                            "ScriptingName": "Rack.1"
+                        },
+                        "ObjectName": "Scenario::RackModel",
+                        "Slots": [
+                            {
+                                "EditedProcess": 1,
+                                "Height": 1500,
+                                "LayerModels": [
+                                    {
+                                        "Constraints": [
+                                            {
+                                                "ConstraintId": 1,
+                                                "ObjectName": "TemporalConstraintViewModel",
+                                                "ShownRack": 1,
+                                                "id": 1
+                                            }
+                                        ],
+                                        "ObjectName": "TemporalScenarioLayer",
+                                        "SharedProcess": {
+                                            "Identifiers": [
+                                                {
+                                                    "ObjectId": 41436351,
+                                                    "ObjectName": "DocumentModel"
+                                                },
+                                                {
+                                                    "ObjectId": 1,
+                                                    "ObjectName": "Scenario::ScenarioDocumentModel"
+                                                },
+                                                {
+                                                    "ObjectId": 0,
+                                                    "ObjectName": "Scenario::BaseScenario"
+                                                },
+                                                {
+                                                    "ObjectId": 0,
+                                                    "ObjectName": "Scenario::ConstraintModel"
+                                                },
+                                                {
+                                                    "ObjectId": 1,
+                                                    "ObjectName": "Scenario"
+                                                }
+                                            ]
+                                        },
+                                        "id": 1,
+                                        "uuid": "f355afd2-9cc7-4223-971a-584d757c7286"
+                                    }
+                                ],
+                                "Metadata": {
+                                    "Color": "",
+                                    "Comment": "",
+                                    "Label": "",
+                                    "ScriptingName": "Slot.1"
+                                },
+                                "ObjectName": "Scenario::SlotModel",
+                                "id": 1
+                            }
+                        ],
+                        "SlotsPositions": [
+                            1
+                        ],
+                        "id": 1
+                    }
+                ],
+                "Rigidity": false,
+                "StartDate": 0,
+                "StartState": 0,
+                "id": 0
+            },
+            "EndEvent": {
+                "Condition": {
+                    "Children": [
+                    ],
+                    "RootNode": {
+                    }
+                },
+                "Date": 15000,
+                "Extent": [
+                    0.40000000000000002,
+                    0.59999999999999998
+                ],
+                "Metadata": {
+                    "Color": "Emphasis4",
+                    "Comment": "",
+                    "Label": "",
+                    "ScriptingName": "Event.1"
+                },
+                "ObjectName": "Scenario::EventModel",
+                "Offset": 0,
+                "States": [
+                    1
+                ],
+                "TimeNode": 1,
+                "id": 1
+            },
+            "EndState": {
+                "Event": 1,
+                "HeightPercentage": 0,
+                "Messages": {
+                    "Children": [
+                    ],
+                    "Following": [
+                    ],
+                    "Name": "",
+                    "Previous": [
+                    ],
+                    "Priorities": [
+                        1,
+                        2,
+                        0
+                    ]
+                },
+                "Metadata": {
+                    "Color": "",
+                    "Comment": "",
+                    "Label": "",
+                    "ScriptingName": "State.1"
+                },
+                "NextConstraint": null,
+                "ObjectName": "Scenario::StateModel",
+                "PreviousConstraint": 0,
+                "StateProcesses": [
+                ],
+                "id": 1
+            },
+            "EndTimeNode": {
+                "Date": 15000,
+                "Events": [
+                    1
+                ],
+                "Extent": [
+                    0.20000000000000001,
+                    0.80000000000000004
+                ],
+                "Metadata": {
+                    "Color": "HalfDark",
+                    "Comment": "",
+                    "Label": "",
+                    "ScriptingName": "TimeNode.1"
+                },
+                "ObjectName": "Scenario::TimeNodeModel",
+                "Trigger": {
+                    "Active": true,
+                    "Expression": {
+                        "Children": [
+                            {
+                                "Children": [
+                                ],
+                                "Relation": {
+                                    "LHS": {
+                                        "Value": {
+                                            "Type": "Bool",
+                                            "Value": true
+                                        }
+                                    },
+                                    "Op": 0,
+                                    "RHS": {
+                                        "Value": {
+                                            "Type": "Bool",
+                                            "Value": false
+                                        }
+                                    }
+                                }
+                            }
+                        ],
+                        "RootNode": {
+                        }
+                    }
+                },
+                "id": 1
+            },
+            "ObjectName": "Scenario::BaseScenario",
+            "StartEvent": {
+                "Condition": {
+                    "Children": [
+                    ],
+                    "RootNode": {
+                    }
+                },
+                "Date": 0,
+                "Extent": [
+                    0.10000000000000001,
+                    0.14999999999999999
+                ],
+                "Metadata": {
+                    "Color": "Emphasis4",
+                    "Comment": "",
+                    "Label": "",
+                    "ScriptingName": "Event.0"
+                },
+                "ObjectName": "Scenario::EventModel",
+                "Offset": 0,
+                "States": [
+                    0
+                ],
+                "TimeNode": 0,
+                "id": 0
+            },
+            "StartState": {
+                "Event": 0,
+                "HeightPercentage": 0,
+                "Messages": {
+                    "Children": [
+                    ],
+                    "Following": [
+                    ],
+                    "Name": "",
+                    "Previous": [
+                    ],
+                    "Priorities": [
+                        1,
+                        2,
+                        0
+                    ]
+                },
+                "Metadata": {
+                    "Color": "",
+                    "Comment": "",
+                    "Label": "",
+                    "ScriptingName": "State.0"
+                },
+                "NextConstraint": 0,
+                "ObjectName": "Scenario::StateModel",
+                "PreviousConstraint": null,
+                "StateProcesses": [
+                ],
+                "id": 0
+            },
+            "StartTimeNode": {
+                "Date": 0,
+                "Events": [
+                    0
+                ],
+                "Extent": [
+                    0.20000000000000001,
+                    0.80000000000000004
+                ],
+                "Metadata": {
+                    "Color": "HalfDark",
+                    "Comment": "",
+                    "Label": "",
+                    "ScriptingName": "TimeNode.0"
+                },
+                "ObjectName": "Scenario::TimeNodeModel",
+                "Trigger": {
+                    "Active": false,
+                    "Expression": {
+                        "Children": [
+                            {
+                                "Children": [
+                                ],
+                                "Relation": {
+                                    "LHS": {
+                                        "Value": {
+                                            "Type": "Bool",
+                                            "Value": true
+                                        }
+                                    },
+                                    "Op": 0,
+                                    "RHS": {
+                                        "Value": {
+                                            "Type": "Bool",
+                                            "Value": false
+                                        }
+                                    }
+                                }
+                            }
+                        ],
+                        "RootNode": {
+                        }
+                    }
+                },
+                "id": 0
+            },
+            "id": 0
+        },
+        "DocumentId": 41436351,
+        "ObjectName": "Scenario::ScenarioDocumentModel",
+        "id": 1
+    },
+    "Plugins": {
+        "Explorer::DeviceDocumentPlugin": {
+            "Children": [
+                {
+                    "DeviceSettings": {
+                        "Endpoint": "Source Audio Hot Hand USB 20:0",
+                        "IO": 1,
+                        "Name": "MidiDevice",
+                        "Port": 1,
+                        "Protocol": "94a362a1-9411-4ee9-b94d-4bc79b1427cf"
+                    }
+                },
+                {
+                    "Children": [
+                        {
+                            "AddressSettings": {
+                                "ClipMode": "Clip",
+                                "Description": "",
+                                "Domain": {
+                                    "Max": null,
+                                    "Min": null,
+                                    "Values": [
+                                    ]
+                                },
+                                "Name": "scene",
+                                "Priority": 0,
+                                "RefreshRate": 0,
+                                "RepetitionFilter": false,
+                                "Tags": [
+                                ],
+                                "Type": "None",
+                                "Value": null,
+                                "ioType": ""
+                            },
+                            "Children": [
+                                {
+                                    "AddressSettings": {
+                                        "ClipMode": "Free",
+                                        "Description": "",
+                                        "Domain": {
+                                            "Max": null,
+                                            "Min": null,
+                                            "Values": [
+                                            ]
+                                        },
+                                        "Name": "reset",
+                                        "Priority": 0,
+                                        "RefreshRate": 0,
+                                        "RepetitionFilter": false,
+                                        "Tags": [
+                                        ],
+                                        "Type": "Bool",
+                                        "Value": false,
+                                        "ioType": "<->"
+                                    },
+                                    "Children": [
+                                    ]
+                                },
+                                {
+                                    "AddressSettings": {
+                                        "ClipMode": "Free",
+                                        "Description": "",
+                                        "Domain": {
+                                            "Max": null,
+                                            "Min": null,
+                                            "Values": [
+                                            ]
+                                        },
+                                        "Name": "InputHotHand",
+                                        "Priority": 0,
+                                        "RefreshRate": 0,
+                                        "RepetitionFilter": false,
+                                        "Tags": [
+                                        ],
+                                        "Type": "Bool",
+                                        "Value": false,
+                                        "ioType": "<->"
+                                    },
+                                    "Children": [
+                                    ]
+                                },
+                                {
+                                    "AddressSettings": {
+                                        "ClipMode": "Free",
+                                        "Description": "",
+                                        "Domain": {
+                                            "Max": null,
+                                            "Min": null,
+                                            "Values": [
+                                            ]
+                                        },
+                                        "Name": "valueHotHand",
+                                        "Priority": 0,
+                                        "RefreshRate": 0,
+                                        "RepetitionFilter": false,
+                                        "Tags": [
+                                        ],
+                                        "Type": "Tuple",
+                                        "Value": [
+                                            {
+                                                "Type": "Float",
+                                                "Value": 0
+                                            },
+                                            {
+                                                "Type": "Float",
+                                                "Value": 0
+                                            },
+                                            {
+                                                "Type": "Float",
+                                                "Value": 0
+                                            }
+                                        ],
+                                        "ioType": "<->"
+                                    },
+                                    "Children": [
+                                    ]
+                                },
+                                {
+                                    "AddressSettings": {
+                                        "ClipMode": "Free",
+                                        "Description": "",
+                                        "Domain": {
+                                            "Max": 1,
+                                            "Min": 0,
+                                            "Values": [
+                                            ]
+                                        },
+                                        "Name": "valueHotHandX",
+                                        "Priority": 0,
+                                        "RefreshRate": 0,
+                                        "RepetitionFilter": false,
+                                        "Tags": [
+                                        ],
+                                        "Type": "Float",
+                                        "Value": 0,
+                                        "ioType": "<->"
+                                    },
+                                    "Children": [
+                                    ]
+                                },
+                                {
+                                    "AddressSettings": {
+                                        "ClipMode": "Free",
+                                        "Description": "",
+                                        "Domain": {
+                                            "Max": 1,
+                                            "Min": 0,
+                                            "Values": [
+                                            ]
+                                        },
+                                        "Name": "valueHotHandY",
+                                        "Priority": 0,
+                                        "RefreshRate": 0,
+                                        "RepetitionFilter": false,
+                                        "Tags": [
+                                        ],
+                                        "Type": "Float",
+                                        "Value": 0,
+                                        "ioType": "<->"
+                                    },
+                                    "Children": [
+                                    ]
+                                },
+                                {
+                                    "AddressSettings": {
+                                        "ClipMode": "Free",
+                                        "Description": "",
+                                        "Domain": {
+                                            "Max": 0.99000000953674316,
+                                            "Min": 0.0099999997764825821,
+                                            "Values": [
+                                            ]
+                                        },
+                                        "Name": "separationLine",
+                                        "Priority": 0,
+                                        "RefreshRate": 0,
+                                        "RepetitionFilter": false,
+                                        "Tags": [
+                                        ],
+                                        "Type": "Float",
+                                        "Value": 0.75,
+                                        "ioType": "<->"
+                                    },
+                                    "Children": [
+                                    ]
+                                },
+                                {
+                                    "AddressSettings": {
+                                        "ClipMode": "Free",
+                                        "Description": "",
+                                        "Domain": {
+                                            "Max": 50,
+                                            "Min": 0.10000000149011612,
+                                            "Values": [
+                                            ]
+                                        },
+                                        "Name": "separationWidth",
+                                        "Priority": 0,
+                                        "RefreshRate": 0,
+                                        "RepetitionFilter": false,
+                                        "Tags": [
+                                        ],
+                                        "Type": "Float",
+                                        "Value": 20,
+                                        "ioType": "<->"
+                                    },
+                                    "Children": [
+                                    ]
+                                },
+                                {
+                                    "AddressSettings": {
+                                        "ClipMode": "Free",
+                                        "Description": "",
+                                        "Domain": {
+                                            "Max": 200,
+                                            "Min": 1,
+                                            "Values": [
+                                            ]
+                                        },
+                                        "Name": "lineNumber",
+                                        "Priority": 0,
+                                        "RefreshRate": 0,
+                                        "RepetitionFilter": false,
+                                        "Tags": [
+                                        ],
+                                        "Type": "Int",
+                                        "Value": 40,
+                                        "ioType": "<->"
+                                    },
+                                    "Children": [
+                                    ]
+                                },
+                                {
+                                    "AddressSettings": {
+                                        "ClipMode": "Free",
+                                        "Description": "",
+                                        "Domain": {
+                                            "Max": 10,
+                                            "Min": 0.10000000149011612,
+                                            "Values": [
+                                            ]
+                                        },
+                                        "Name": "lineWidth",
+                                        "Priority": 0,
+                                        "RefreshRate": 0,
+                                        "RepetitionFilter": false,
+                                        "Tags": [
+                                        ],
+                                        "Type": "Float",
+                                        "Value": 5,
+                                        "ioType": "<->"
+                                    },
+                                    "Children": [
+                                    ]
+                                },
+                                {
+                                    "AddressSettings": {
+                                        "ClipMode": "Free",
+                                        "Description": "",
+                                        "Domain": {
+                                            "Max": 500,
+                                            "Min": 1,
+                                            "Values": [
+                                            ]
+                                        },
+                                        "Name": "lineAmplitude",
+                                        "Priority": 0,
+                                        "RefreshRate": 0,
+                                        "RepetitionFilter": false,
+                                        "Tags": [
+                                        ],
+                                        "Type": "Float",
+                                        "Value": 200,
+                                        "ioType": "<->"
+                                    },
+                                    "Children": [
+                                    ]
+                                },
+                                {
+                                    "AddressSettings": {
+                                        "ClipMode": "Free",
+                                        "Description": "",
+                                        "Domain": {
+                                            "Max": 20,
+                                            "Min": 1,
+                                            "Values": [
+                                            ]
+                                        },
+                                        "Name": "lineFrequence",
+                                        "Priority": 0,
+                                        "RefreshRate": 0,
+                                        "RepetitionFilter": false,
+                                        "Tags": [
+                                        ],
+                                        "Type": "Float",
+                                        "Value": 10,
+                                        "ioType": "<->"
+                                    },
+                                    "Children": [
+                                    ]
+                                },
+                                {
+                                    "AddressSettings": {
+                                        "ClipMode": "Free",
+                                        "Description": "",
+                                        "Domain": {
+                                            "Max": 1,
+                                            "Min": 0,
+                                            "Values": [
+                                            ]
+                                        },
+                                        "Name": "lineNoise",
+                                        "Priority": 0,
+                                        "RefreshRate": 0,
+                                        "RepetitionFilter": false,
+                                        "Tags": [
+                                        ],
+                                        "Type": "Float",
+                                        "Value": 0.5,
+                                        "ioType": "<->"
+                                    },
+                                    "Children": [
+                                    ]
+                                },
+                                {
+                                    "AddressSettings": {
+                                        "ClipMode": "Free",
+                                        "Description": "",
+                                        "Domain": {
+                                            "Max": 600,
+                                            "Min": 50,
+                                            "Values": [
+                                            ]
+                                        },
+                                        "Name": "circleFrequence",
+                                        "Priority": 0,
+                                        "RefreshRate": 0,
+                                        "RepetitionFilter": false,
+                                        "Tags": [
+                                        ],
+                                        "Type": "Float",
+                                        "Value": 100,
+                                        "ioType": "<->"
+                                    },
+                                    "Children": [
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "DeviceSettings": {
+                        "Host": "127.0.0.1",
+                        "InPort": 9998,
+                        "Name": "kaleidoSound",
+                        "OutPort": 13579,
+                        "Protocol": "d305c12e-31f0-46e3-8c9b-3b8744092fc4"
+                    }
+                }
+            ],
+            "ObjectName": "Explorer::DeviceDocumentPlugin",
+            "RootNode": {
+            },
+            "id": 2,
+            "uuid": "6e610e1f-9de2-4c36-90dd-0ef570002a21"
+        }
+    },
+    "Version": 2
+}

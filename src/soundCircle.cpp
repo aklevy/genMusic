@@ -146,15 +146,17 @@ void SoundCircle::drawSoundCircle()
 }
 //--------------------------------------------------------------
 
-float SoundCircle::getSound()
+float SoundCircle::getSound(float freq)
 {
     if(_soundDuration > 0 && _radius != 0)
     {
         // float w = sawOsc.pulse(55,0.6);
         float modR = _radius/4;//150 + _radius * 100;
-        float freq = 100;//220;
+        float propXY = min(_position.x/(_position.y+1.),250.);
 
-        float pulse = _oscSound.sinewave(freq + freq*modR);//440+440*0.2);
+        float pulse = propXY * _oscSound.sinewave(freq + freq*modR);//440+440*0.2);
+        pulse += (1.-propXY) * _oscSound.sinewave(_position.x);//440+440*0.2);
+
         //pulse += _radius/20*_oscSound.noise();
        // _filterSound.lopass(pulse,_position.x/2000);
 
