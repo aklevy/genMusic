@@ -7,14 +7,14 @@
                 "FullView": {
                     "CenterOn": [
                         0,
-                        0,
-                        660,
-                        528
+                        47,
+                        318,
+                        379
                     ],
                     "ConstraintId": 0,
                     "ObjectName": "FullViewConstraintViewModel",
                     "ShownRack": 1,
-                    "Zoom": 25,
+                    "Zoom": 51.886792452830186,
                     "id": 0
                 },
                 "HeightPercentage": 0,
@@ -103,10 +103,10 @@
                                         "SourceMax": 127,
                                         "SourceMin": 0,
                                         "TargetAddress": {
-                                            "Device": "kaleidoSound",
+                                            "Device": "genMusic",
                                             "Path": "scene/separationLine"
                                         },
-                                        "TargetMax": 0.99000000953674316,
+                                        "TargetMax": 0.98999999999999999,
                                         "TargetMin": 0.0099999997764825821,
                                         "id": 1,
                                         "uuid": "12a5d9b8-823e-4303-99f8-34db37c448b4"
@@ -134,7 +134,7 @@
                                             ],
                                             "id": 45345
                                         },
-                                        "Duration": 6187.6920699783095,
+                                        "Duration": 6187,
                                         "Metadata": {
                                             "Color": "",
                                             "Comment": "",
@@ -149,7 +149,7 @@
                                         "SourceMax": 127,
                                         "SourceMin": 0,
                                         "TargetAddress": {
-                                            "Device": "kaleidoSound",
+                                            "Device": "genMusic",
                                             "Path": "scene/circleFrequence"
                                         },
                                         "TargetMax": 600,
@@ -195,7 +195,7 @@
                                         "SourceMax": 127,
                                         "SourceMin": 0,
                                         "TargetAddress": {
-                                            "Device": "kaleidoSound",
+                                            "Device": "genMusic",
                                             "Path": "scene/lineNoise"
                                         },
                                         "TargetMax": 1,
@@ -999,15 +999,6 @@
         "Explorer::DeviceDocumentPlugin": {
             "Children": [
                 {
-                    "DeviceSettings": {
-                        "Endpoint": "Source Audio Hot Hand USB 20:0",
-                        "IO": 1,
-                        "Name": "MidiDevice",
-                        "Port": 1,
-                        "Protocol": "94a362a1-9411-4ee9-b94d-4bc79b1427cf"
-                    }
-                },
-                {
                     "Children": [
                         {
                             "AddressSettings": {
@@ -1047,7 +1038,7 @@
                                         "Tags": [
                                         ],
                                         "Type": "Bool",
-                                        "Value": false,
+                                        "Value": true,
                                         "ioType": "<->"
                                     },
                                     "Children": [
@@ -1348,9 +1339,18 @@
                     "DeviceSettings": {
                         "Host": "127.0.0.1",
                         "InPort": 9998,
-                        "Name": "kaleidoSound",
+                        "Name": "genMusic",
                         "OutPort": 13579,
                         "Protocol": "d305c12e-31f0-46e3-8c9b-3b8744092fc4"
+                    }
+                },
+                {
+                    "DeviceSettings": {
+                        "Endpoint": "Source Audio Hot Hand USB 20:0",
+                        "IO": 1,
+                        "Name": "MidiDevice",
+                        "Port": 1,
+                        "Protocol": "94a362a1-9411-4ee9-b94d-4bc79b1427cf"
                     }
                 }
             ],
