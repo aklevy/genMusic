@@ -18,7 +18,9 @@ Project{
             'src/soundCircle.cpp',
             'src/soundCircle.h',
             'src/soundLine.cpp',
-            'src/soundLine.h'
+            'src/soundLine.h',
+          //  'src/soundSquare.cpp',
+           // 'src/soundSquare.h'
         ]
 
         of.addons: [
