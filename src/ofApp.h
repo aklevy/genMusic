@@ -6,7 +6,7 @@
 
 #include "ofxGui.h"
 //#include "ofxMaxim.h"
-#include "ofxOssia.hpp"
+#include "ofxOssia.h"
 
 //#include "network.hpp"
 
@@ -79,7 +79,7 @@ private:
 
 
     // Network for communication with i-score
-    Network             _nw;
+    ofxOssia             _ossia;
 
     // Gui
     ofxPanel    _gui;
@@ -101,7 +101,7 @@ private:
      * */
 
     // line parameters
-    ofParameterGroup            _lineParameters;
+    ossia::ParameterGroup       _lineParameters;
     ossia::Parameter<int>       _lineNb;
     ossia::Parameter<float>     _lineWidth;
     ossia::Parameter<float>     _lineAmplitude;
@@ -119,7 +119,7 @@ private:
      *
      * */
     // Circle parameters
-    ofParameterGroup        _circleParameters;
+    ossia::ParameterGroup         _circleParameters;
     ofParameter<ofColor>    _circleDefaultColor;
     ofParameter<ofColor>    _currentCircleColor;
     // ofParameter<bool>       _circleFill;

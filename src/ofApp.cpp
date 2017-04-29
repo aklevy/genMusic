@@ -11,9 +11,7 @@ ofApp::~ofApp()
 
 }
 //--------------------------------------------------------------
-ofApp::ofApp():
-    _nw("genMusic","i-score","127.0.0.1",13579, 9998)
-{}
+ofApp::ofApp(){}
 
 //--------------------------------------------------------------
 void ofApp::reset(bool &newval)
@@ -120,53 +118,54 @@ void ofApp::currentCircleColModified(ofColor& newval)
 //--------------------------------------------------------------
 void ofApp::setupGui()
 {
-    _gui.setup("Gui");
-    _gui.setPosition(0 , 0);
+
+    // setup ofxOSSIA parameters to be add on the Gui
+    _ossia.setup();
+    _ossia.get_root_node();
 
     // add reset button
-    _gui.add(_reset.setup(_nw.getSceneNode(),"reset",false));
+    _reset.setup(_ossia.get_root_node(),"reset",false);
     _reset.addListener(this,&ofApp::reset);
 
     // add input choosing button
-    _gui.add(_inputHotHand.setup(_nw.getSceneNode(),"InputHotHand",false));//set("InputHotHand",false));
+    _inputHotHand.setup(_ossia.get_root_node(),"InputHotHand",false);
     _inputHotHand.addListener(this,&ofApp::changeInput);
 
     // adding the input from the hot hand
-    //_gui.add(_valueHotHand.set("valueHotHand",ofVec3f(0),ofVec3f(0),ofVec3f(1)));
-    _gui.add(_valueHotHand.setup(_nw.getSceneNode(),"valueHotHand",ofVec3f(0),ofVec3f(0),ofVec3f(1)));
-    //_valueHotHand.addListener(this,&ofApp::inputFromHotHand);
+    _valueHotHand.setup(_ossia.get_root_node(),"valueHotHand",ofVec3f(0),ofVec3f(0),ofVec3f(1));
 
-    _gui.add(_valueHotHandX.setup(_nw.getSceneNode(),"valueHotHandX",0.,0,1));
+    _valueHotHandX.setup(_ossia.get_root_node(),"valueHotHandX",0.,0,1);
     _valueHotHandX.addListener(this,&ofApp::inputFromHotHandX);
-    _gui.add(_valueHotHandY.setup(_nw.getSceneNode(),"valueHotHandY",0.,0,1));
+
+    _valueHotHandY.setup(_ossia.get_root_node(),"valueHotHandY",0.,0,1);
     _valueHotHandY.addListener(this,&ofApp::inputFromHotHandY);
 
     // separation Line x
-    _gui.add(_sepLineX.setup(_nw.getSceneNode(),"separationLine",0.75,0.01,0.99));
-    // separation Line x
-    _gui.add(_sepLineWidth.setup(_nw.getSceneNode(),"separationWidth",20,0.1,50));
+    _sepLineX.setup(_ossia.get_root_node(),"separationLine",0.75,0.01,0.99);
+    _sepLineWidth.setup(_ossia.get_root_node(),"separationWidth",20,0.1,50);
+
 
 
     /*
-     *  Line Parameters Group
-     */
-    _lineParameters.setName("lineParameters");
+    *  Line Parameters Group
+    */
+    _lineParameters.setup(_ossia.get_root_node(),"lineParameters");
 
     // line number
-    _lineParameters.add(_lineNb.setup(_nw.getSceneNode(),"lineNumber",40,1,200));
+    _lineNb.setup(_lineParameters,"lineNumber",40,1,200);
     _lineNb.addListener(this,&ofApp::lineNbModified);
 
     // line width
-    _lineParameters.add(_lineWidth.setup(_nw.getSceneNode(),"lineWidth",5,0.1,10));
+    _lineWidth.setup(_lineParameters,"lineWidth",5,0.1,10);
 
     // line amplitude
-    _lineParameters.add(_lineAmplitude.setup(_nw.getSceneNode(),"lineAmplitude",200,1,500));
+    _lineAmplitude.setup(_lineParameters,"lineAmplitude",200,1,500);
 
     // line frequence
-    _lineParameters.add(_lineFrequence.setup(_nw.getSceneNode(),"lineFrequence",10,1,20));
+   _lineFrequence.setup(_lineParameters,"lineFrequence",10,1,20);
 
     // line (square) noise factor
-    _lineParameters.add(_lineNoise.setup(_nw.getSceneNode(),"lineNoise",0.5,0.,1.));
+   _lineNoise.setup(_lineParameters,"lineNoise",0.5,0.,1.);
 
     // line colors
     _lineParameters.add(_lineDefaultColor.set
@@ -186,7 +185,7 @@ void ofApp::setupGui()
     /*
      *  Circle Parameters Group
      */
-    _circleParameters.setName("circleParameters");
+    _circleParameters.setup(_ossia.get_root_node(),"circleParameters");
 
     // filling circle
     // _circleParameters.add(_circleFill.set("fillCircle",true));//_reset.setup(_nw.getSceneNode(),"reset",false));
@@ -213,7 +212,7 @@ void ofApp::setupGui()
 
 
     // circle frequence
-    _circleParameters.add(_circleFrequence.setup(_nw.getSceneNode(),"circleFrequence",100.,50.,600.));//_reset.setup(_nw.getSceneNode(),"reset",false));
+    _circleFrequence.setup(_circleParameters,"circleFrequence",100.,50.,600.);//_reset.setup(_nw.getSceneNode(),"reset",false));
 
 
     // draw all the circles (even if they do not emit any sound)
@@ -224,15 +223,17 @@ void ofApp::setupGui()
      *  Sound Parameters Group
      */
     _soundParameters.setName("generalSoundParameters");
-   // _soundParameters.add(_freqMod.set("frequence",0.5,0,10));
+    // _soundParameters.add(_freqMod.set("frequence",0.5,0,10));
     _soundParameters.add(_volumeLine.set("volumeLine",1.,0,1));
     _soundParameters.add(_volumeCircle.set("volumeCircle",0.2,0,1.));
 
 
-    // add parameters' group to the gui
-    _gui.add(_lineParameters);
-    _gui.add(_circleParameters);
-    _gui.add(_soundParameters);
+    // gui basic setup
+    _gui.setup("Gui");
+    _gui.setPosition(0 , 0);
+    _gui.add (_ossia.get_root_node());
+    _gui.add (_soundParameters);
+
 
     _gui.minimizeAll();
 
@@ -469,7 +470,7 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels)
     float noiseFactor = _lineNoise.get();
     float cFreq = _circleFrequence.get();
 
-   // float sepLineNoise = _oscSoundSepLine.noise();
+    // float sepLineNoise = _oscSoundSepLine.noise();
 
     for(int i = 0 ; i < bufferSize * nChannels; i++) output[i] = 0;
 
@@ -508,7 +509,7 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels)
         output[i * nChannels +1] += soundCurr;
 
         // add sep line sound if selected
-       /* if(_sepLineSelected)
+        /* if(_sepLineSelected)
         {
             output[i * nChannels] += 10*sepLineNoise;
             output[i * nChannels +1] += 10*sepLineNoise;
@@ -573,11 +574,11 @@ void ofApp::inputFromHotHandX(float& newval)
     // remapping to the screen dimension
     int x = newval * _windowWidth;
 
-  // ofVec3f oldVal = _valueHotHand.get();
-  // int y = oldVal.y * _windowHeight;
+    // ofVec3f oldVal = _valueHotHand.get();
+    // int y = oldVal.y * _windowHeight;
 
- //  oldVal.x = x;
-  //  _valueHotHand.set(oldVal);
+    //  oldVal.x = x;
+    //  _valueHotHand.set(oldVal);
     inputToCircle(x, x, 0);//oldVal.z );
 
 }
@@ -593,16 +594,16 @@ void ofApp::inputFromHotHandY(float& newval)
     // remapping to the screen dimension
 
     int y = newval * _windowHeight;
-   // _inputHotHand.y = y;
+    // _inputHotHand.y = y;
 
     ofVec3f oldVal = _valueHotHand.get();
-   // oldVal.y = y;
+    // oldVal.y = y;
     // _valueHotHand.set(oldVal);
     int x = oldVal.y * _windowWidth;
 
-  //  oldVal.x = x;
-   //  _valueHotHand.set(oldVal);
-     inputToCircle(x, y, oldVal.z );
+    //  oldVal.x = x;
+    //  _valueHotHand.set(oldVal);
+    inputToCircle(x, y, oldVal.z );
 }
 
 //--------------------------------------------------------------
