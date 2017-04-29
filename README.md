@@ -14,7 +14,7 @@ It is an openFrameworks application, using the following addons:
 
 **Tested OS**
 
-Tested only on Linux (Debian/stretch and Antergos)
+Tested on Linux (Debian/stretch and Antergos), OSX (10.12)
 
 Be careful of your PC's volume while testing genMusic ...
 
