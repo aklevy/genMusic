@@ -3,6 +3,9 @@
 genMusic is an instrument, played using mouse input and/or HotHand and the software i-score (http://i-score.org/).
 The graphics are inspired by the works of Swiss graphic designer Josef Müller-Brockmann, and more precisely by his posters for Musica Viva.
 
+![genMusic screenshot](/screenshots/genMusic.png)
+
+
 It is an openFrameworks application, using the following addons:
 
 * ofxGui (for the interface)
